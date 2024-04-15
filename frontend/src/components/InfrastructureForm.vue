@@ -173,7 +173,7 @@
         </div>
         <div class="w-full px-4 mb-3 md:mb-0">
             <label class="block uppercase text-white text-sm mb-2" for="utility-comms">
-                Telecommunications
+                Communications
             </label>
             <div class="relative">
                 <select

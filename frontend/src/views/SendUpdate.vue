@@ -1,5 +1,5 @@
 <template>
-  <section class="mt-12 mb-16 bg-black">
+  <section class="mt-12 mb-16 pt-4 bg-black">
     <form class="w-full max-w-lg flex flex-col" @submit.prevent>
       <div class="w-full px-3 mb-6 md:mb-0">
         <label class="block uppercase text-white text-md font-bold mb-2" for="grid-state">
@@ -39,7 +39,6 @@ export default {
   },
   data() {
     return {
-      onLine: navigator.onLine,
       selectedForm: 'Infrastructure'
     };
   },
@@ -50,14 +49,6 @@ export default {
     submitForm(payload) {
       console.log(payload)
     }
-  },
-  mounted() {
-    window.addEventListener("online", this.handleOnlineStatus);
-    window.addEventListener("offline", this.handleOnlineStatus);
-  },
-  beforeUnmount() {
-    window.removeEventListener("online", this.handleOnlineStatus);
-    window.removeEventListener("offline", this.handleOnlineStatus);
   }
 };
 </script>

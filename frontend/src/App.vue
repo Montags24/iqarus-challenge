@@ -1,7 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-
-
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -9,7 +7,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <!-- Header -->
     <header class="relative z-10">
       <div class="sm:hidden">
-        <MobileHeader></MobileHeader>
+        <MobileHeader :onLine="onLine"></MobileHeader>
       </div>
     </header>
 
@@ -36,5 +34,23 @@ export default {
     MobileNavBar,
     MobileHeader
   },
+  data() {
+    return {
+      onLine: navigator.onLine
+    }
+  },
+  methods: {
+    handleOnlineStatus() {
+      this.onLine = navigator.onLine;
+    }
+  },
+  mounted() {
+    window.addEventListener("online", this.handleOnlineStatus);
+    window.addEventListener("offline", this.handleOnlineStatus);
+  },
+  beforeUnmount() {
+    window.removeEventListener("online", this.handleOnlineStatus);
+    window.removeEventListener("offline", this.handleOnlineStatus);
+  }
 };
 </script>

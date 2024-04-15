@@ -9,7 +9,7 @@
             <RouterLink to="/">
                 <div class="flex flex-col items-center" :class="{ 'text-orange-500': $route.name == 'home' }">
                     <v-icon name="io-send" />
-                    <p class="pt-1">Send</p>
+                    <p class="pt-1">Update</p>
                 </div>
             </RouterLink>
             <RouterLink to="/map">
