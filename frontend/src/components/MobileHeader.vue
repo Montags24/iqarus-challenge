@@ -1,11 +1,11 @@
 <template>
-    <div class="flex text-center items-center bg-off-black text-white py-3 fixed 
+    <div class="flex justify-between text-center items-center bg-off-black text-white py-3 fixed 
              inset-x-0 
-             top-0 " :class="{ 'justify-between': onLine }">
-        <div v-if="!onLine" class="flex flex-col justify-center items-center px-8">
+             top-0 ">
+        <div v-if="!onLine" class="px-8">
             <v-icon name="hi-solid-status-offline" class="text-orange-500" />
         </div>
-        <div v-else class="flex flex-col justify-center items-center px-8">
+        <div v-else class="px-8">
             <v-icon name="hi-solid-status-online" class="text-orange-500" />
         </div>
         <h1 class="flex text-center font-montserrat font-semibold text-xl text-orange-500">[ ResQHub ]
