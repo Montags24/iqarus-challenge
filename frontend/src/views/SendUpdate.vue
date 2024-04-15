@@ -27,15 +27,21 @@
       <div v-if="selectedForm.toLowerCase() == 'infrastructure'">
         <InfrastructureForm @submitForm="submitForm"></InfrastructureForm>
       </div>
+      <div v-else-if="selectedForm.toLowerCase() == 'security'">
+        <SecurityForm @submitForm="submitForm"></SecurityForm>
+      </div>
     </form>
   </section>
 </template>
 
 <script>
 import InfrastructureForm from '../components/InfrastructureForm.vue'
+import SecurityForm from '@/components/SecurityForm.vue';
+
 export default {
   components: {
     InfrastructureForm,
+    SecurityForm
   },
   data() {
     return {
