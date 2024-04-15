@@ -1,22 +1,40 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 
+
 </script>
 
 <template>
-  <header>
+  <div class="bg-black">
+    <!-- Header -->
+    <header class="relative z-10">
+      <div class="sm:hidden">
+        <MobileHeader></MobileHeader>
+      </div>
+    </header>
 
-  </header>
+    <!-- Content -->
+    <main class="relative z-0 max-container">
+      <RouterView />
+    </main>
 
-  <RouterView />
+    <!-- Footer -->
+    <footer class="relative z-10">
+      <div class="sm:hidden">
+        <MobileNavBar></MobileNavBar>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script>
-import HomeView from './views/HomeView.vue';
+import MobileNavBar from './components/MobileNavBar.vue';
+import MobileHeader from './components/MobileHeader.vue'
 
 export default {
   components: {
-    HomeView,
+    MobileNavBar,
+    MobileHeader
   },
 };
 </script>
