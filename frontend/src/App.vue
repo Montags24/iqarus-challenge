@@ -1,22 +1,56 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header>
+  <div class="bg-black">
+    <!-- Header -->
+    <header class="relative z-10">
+      <div class="sm:hidden">
+        <MobileHeader :onLine="onLine"></MobileHeader>
+      </div>
+    </header>
 
-  </header>
+    <!-- Content -->
+    <main class="relative z-0 max-container">
+      <RouterView />
+    </main>
 
-  <RouterView />
+    <!-- Footer -->
+    <footer class="relative z-10">
+      <div class="sm:hidden">
+        <MobileNavBar></MobileNavBar>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script>
-import HomeView from './views/HomeView.vue';
+import MobileNavBar from './components/MobileNavBar.vue';
+import MobileHeader from './components/MobileHeader.vue'
 
 export default {
   components: {
-    HomeView,
+    MobileNavBar,
+    MobileHeader
   },
+  data() {
+    return {
+      onLine: navigator.onLine
+    }
+  },
+  methods: {
+    handleOnlineStatus() {
+      this.onLine = navigator.onLine;
+    }
+  },
+  mounted() {
+    window.addEventListener("online", this.handleOnlineStatus);
+    window.addEventListener("offline", this.handleOnlineStatus);
+  },
+  beforeUnmount() {
+    window.removeEventListener("online", this.handleOnlineStatus);
+    window.removeEventListener("offline", this.handleOnlineStatus);
+  }
 };
 </script>

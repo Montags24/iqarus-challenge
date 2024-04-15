@@ -48,6 +48,12 @@ export default defineConfig({
             type: 'image/png',
             form_factor: 'wide',
             label: 'Wonder Widgets'
+          },
+          {
+            src: '/pwa-maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            label: 'Wonder Widgets'
           }
         ]
       }
