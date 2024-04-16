@@ -23,7 +23,8 @@ import { RouterView } from 'vue-router'
 
 <script>
 import MobileNavBar from './components/MobileNavBar.vue';
-import MobileHeader from './components/MobileHeader.vue'
+import MobileHeader from './components/MobileHeader.vue';
+import { getAllItems } from './stores/offlineWorker';
 
 export default {
   components: {
@@ -37,16 +38,23 @@ export default {
   },
   watch: {
     // whenever onLine changes from false to true - try to send cached entries to server
-    onLine(newStatus) {
+    async onLine(newStatus) {
       if (newStatus) {
         console.log("Back online")
+        const items = await getAllItems()
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            console.log(items[i])
+            console.log(JSON.parse(items[i].name.payload))
+          }
+        }
       }
     }
   },
   methods: {
     handleOnlineStatus() {
       this.onLine = navigator.onLine;
-    }
+    },
   },
   mounted() {
     window.addEventListener("online", this.handleOnlineStatus);

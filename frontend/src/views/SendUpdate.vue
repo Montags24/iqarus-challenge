@@ -37,6 +37,8 @@
 <script>
 import InfrastructureForm from '../components/InfrastructureForm.vue'
 import SecurityForm from '@/components/SecurityForm.vue';
+import { addItem, removeItem, getAllItems } from '@/stores/offlineWorker';
+import { checkLocationPermission } from '@/stores/geoLocation';
 
 export default {
   components: {
@@ -50,15 +52,28 @@ export default {
   },
   data() {
     return {
-      selectedForm: 'Infrastructure'
+      selectedForm: 'Infrastructure',
+      items: []
     };
   },
   methods: {
     submitForm(payload) {
       if (this.onLine) {
         console.log(`I am online! ${payload}`)
+        checkLocationPermission()
       } else {
-        console.log(`I am offline ${payload}`)
+        this.addItemToDb(JSON.stringify(payload))
+      }
+    },
+    async addItemToDb(payload) {
+      try {
+        const newItem = { payload };
+        const itemId = await addItem(newItem);
+        this.items.push({ id: itemId, ...newItem });
+        console.log("added item")
+      } catch (error) {
+        console.error(error);
+        alert('Failed to add item');
       }
     }
   }
