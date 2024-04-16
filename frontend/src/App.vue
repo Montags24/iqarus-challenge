@@ -11,7 +11,7 @@ import { RouterView } from 'vue-router'
 
     <!-- Content -->
     <main class="relative z-0 max-container">
-      <RouterView />
+      <RouterView :onLine="onLine" />
     </main>
 
     <!-- Footer -->

@@ -43,17 +43,23 @@ export default {
     InfrastructureForm,
     SecurityForm
   },
+  props: {
+    onLine: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
       selectedForm: 'Infrastructure'
     };
   },
   methods: {
-    handleOnlineStatus() {
-      this.onLine = navigator.onLine;
-    },
     submitForm(payload) {
-      console.log(payload)
+      if (this.onLine) {
+        console.log(`I am online! ${payload}`)
+      } else {
+        console.log(`I am offline ${payload}`)
+      }
     }
   }
 };
