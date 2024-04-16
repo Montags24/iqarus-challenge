@@ -6,28 +6,25 @@ import { RouterView } from 'vue-router'
   <div class="bg-black">
     <!-- Header -->
     <header class="relative z-10">
-      <div class="sm:hidden">
-        <MobileHeader :onLine="onLine"></MobileHeader>
-      </div>
+      <MobileHeader :onLine="onLine"></MobileHeader>
     </header>
 
     <!-- Content -->
     <main class="relative z-0 max-container">
-      <RouterView />
+      <RouterView :onLine="onLine" />
     </main>
 
     <!-- Footer -->
     <footer class="relative z-10">
-      <div class="sm:hidden">
-        <MobileNavBar></MobileNavBar>
-      </div>
+      <MobileNavBar></MobileNavBar>
     </footer>
   </div>
 </template>
 
 <script>
 import MobileNavBar from './components/MobileNavBar.vue';
-import MobileHeader from './components/MobileHeader.vue'
+import MobileHeader from './components/MobileHeader.vue';
+import { getAllItems } from './stores/offlineWorker';
 
 export default {
   components: {
@@ -39,10 +36,25 @@ export default {
       onLine: navigator.onLine
     }
   },
+  watch: {
+    // whenever onLine changes from false to true - try to send cached entries to server
+    async onLine(newStatus) {
+      if (newStatus) {
+        console.log("Back online")
+        const items = await getAllItems()
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            console.log(items[i])
+            console.log(JSON.parse(items[i].name.payload))
+          }
+        }
+      }
+    }
+  },
   methods: {
     handleOnlineStatus() {
       this.onLine = navigator.onLine;
-    }
+    },
   },
   mounted() {
     window.addEventListener("online", this.handleOnlineStatus);

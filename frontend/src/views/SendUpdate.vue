@@ -1,7 +1,7 @@
 <template>
   <section class="mt-12 mb-16 pt-4 bg-black">
     <form class="w-full max-w-lg flex flex-col" @submit.prevent>
-      <div class="w-full px-3 mb-6 md:mb-0">
+      <div class="w-full px-3 mb-6">
         <label class="block uppercase text-white text-md font-bold mb-2" for="grid-state">
           Category
         </label>
@@ -24,30 +24,66 @@
           </div>
         </div>
       </div>
-      <div v-if="selectedForm.toLowerCase() == 'infrastructure'">
-        <InfrastructureForm @submitForm="submitForm"></InfrastructureForm>
-      </div>
+      <BoilerplateForm :formObj="loadForm()" @submitForm="submitForm"></BoilerplateForm>
     </form>
   </section>
 </template>
 
 <script>
-import InfrastructureForm from '../components/InfrastructureForm.vue'
+import BoilerplateForm from '../components/BoilerplateForm.vue';
+import { infrastructureForm, securityForm, communicationsForm } from '../components/index';
+import { addItem, removeItem, getAllItems } from '@/stores/offlineWorker';
+import { checkLocationPermission } from '@/stores/geoLocation';
+
 export default {
   components: {
-    InfrastructureForm,
+    BoilerplateForm,
+  },
+  props: {
+    onLine: {
+      type: Boolean,
+    },
   },
   data() {
     return {
-      selectedForm: 'Infrastructure'
+      infrastructureForm: infrastructureForm,
+      securityForm: securityForm,
+      communicationsForm: communicationsForm,
+      selectedForm: 'Infrastructure',
+      items: []
     };
   },
   methods: {
-    handleOnlineStatus() {
-      this.onLine = navigator.onLine;
-    },
     submitForm(payload) {
-      console.log(payload)
+      if (this.onLine) {
+        console.log(`I am online! ${payload}`)
+        checkLocationPermission()
+      } else {
+        this.addItemToDb(JSON.stringify(payload))
+      }
+    },
+    async addItemToDb(payload) {
+      try {
+        const newItem = { payload };
+        const itemId = await addItem(newItem);
+        this.items.push({ id: itemId, ...newItem });
+        console.log("added item")
+      } catch (error) {
+        console.error(error);
+        alert('Failed to add item');
+      }
+    },
+    loadForm() {
+      switch (this.selectedForm.toLowerCase()) {
+        case 'infrastructure':
+          return this.infrastructureForm
+        case 'security':
+          return this.securityForm
+        case 'communication':
+          return this.communicationsForm
+        default:
+        // code block
+      }
     }
   }
 };
