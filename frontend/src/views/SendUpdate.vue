@@ -24,26 +24,20 @@
           </div>
         </div>
       </div>
-      <div v-if="selectedForm.toLowerCase() == 'infrastructure'">
-        <InfrastructureForm @submitForm="submitForm"></InfrastructureForm>
-      </div>
-      <div v-else-if="selectedForm.toLowerCase() == 'security'">
-        <SecurityForm @submitForm="submitForm"></SecurityForm>
-      </div>
+      <BoilerplateForm :formObj="loadForm()" @submitForm="submitForm"></BoilerplateForm>
     </form>
   </section>
 </template>
 
 <script>
-import InfrastructureForm from '../components/InfrastructureForm.vue'
-import SecurityForm from '@/components/SecurityForm.vue';
+import BoilerplateForm from '../components/BoilerplateForm.vue'
+import { infrastructureForm, securityForm } from '../components/index'
 import { addItem, removeItem, getAllItems } from '@/stores/offlineWorker';
 import { checkLocationPermission } from '@/stores/geoLocation';
 
 export default {
   components: {
-    InfrastructureForm,
-    SecurityForm
+    BoilerplateForm,
   },
   props: {
     onLine: {
@@ -52,6 +46,8 @@ export default {
   },
   data() {
     return {
+      infrastructureForm: infrastructureForm,
+      securityForm: securityForm,
       selectedForm: 'Infrastructure',
       items: []
     };
@@ -75,6 +71,17 @@ export default {
         console.error(error);
         alert('Failed to add item');
       }
+    },
+    loadForm() {
+      switch (this.selectedForm.toLowerCase()) {
+        case 'infrastructure':
+          return this.infrastructureForm
+        case 'security':
+          return this.securityForm
+        default:
+        // code block
+      }
+
     }
   }
 };

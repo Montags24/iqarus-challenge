@@ -1,6 +1,7 @@
 const securityForm = [
   {
     title: 'Security risks',
+    formName: 'security',
     formEntries: [
       {
         label: 'risk-armed-groups',
@@ -30,6 +31,7 @@ const securityForm = [
   },
   {
     title: 'Incidents',
+    formName: 'incidents',
     formEntries: [
       {
         label: 'incidents-reported',

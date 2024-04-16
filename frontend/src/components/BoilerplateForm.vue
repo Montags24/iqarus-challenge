@@ -1,5 +1,5 @@
 <template>
-    <section v-for="(section, index) in infrastructureForm" :key="index" class="pb-4">
+    <section v-for="(section, index) in formObj" :key="index" class="pb-4">
         <label class="px-3 block uppercase text-white text-md font-bold">
             {{ section.title }}
         </label>
@@ -32,14 +32,17 @@
 </template>
 
 <script>
-import { infrastructureForm } from './index';
 export default {
     emits: ['submitForm'],
+    props: {
+        formObj: {
+            type: Object,
+        },
+    },
     data() {
         return {
-            infrastructureForm: infrastructureForm,
             payload: {
-                formName: 'infrastructure',
+                formName: this.formObj.formName,
             }
         };
     },
