@@ -58,6 +58,7 @@ const securityForm = [
 const infrastructureForm = [
   {
     title: 'Roads',
+    formName: 'roads',
     formEntries: [
       {
         title: 'Condition',
@@ -87,6 +88,7 @@ const infrastructureForm = [
   },
   {
     title: 'Buildings',
+    formName: 'buildings',
     formEntries: [
       {
         title: 'Structural Integrity',
@@ -116,6 +118,7 @@ const infrastructureForm = [
   },
   {
     title: 'Utilities',
+    formName: 'utilities',
     formEntries: [
       {
         title: 'Power Supply',
@@ -145,4 +148,103 @@ const infrastructureForm = [
   }
 ]
 
-export { securityForm, infrastructureForm }
+const communicationsForm = [
+  {
+    title: 'Communications',
+    formName: 'communications',
+    formEntries: [
+      {
+        label: 'comms-infrastructure',
+        payloadLabel: 'commsInfrastructure',
+        title: 'Status of cell towers and internet infrastructure',
+        options: ['Fully operational', 'Partly operational', 'Offline']
+      },
+      {
+        label: 'comms-phone-and-internet',
+        payloadLabel: 'commsPhoneAndInternet',
+        title: 'Reliability of phone and internet connectivity',
+        options: [
+          'High (consistent signal and bandwidth)',
+          'Moderate (intermittent signal and/or reduced bandwidth)',
+          'Low (unreliable signal and insufficient bandwidth)'
+        ]
+      },
+      {
+        label: 'comms-availablity',
+        payloadLabel: 'commsAvailability',
+        title: 'Availability of communication devices',
+        options: [
+          'Abundant (phones, radios, satellite phones)',
+          'Limited (some devices available, may not be enough for all teams)',
+          'Scarce (very few devices, priority for critical communications only)'
+        ]
+      },
+      {
+        label: 'comms-alternative',
+        payloadLabel: 'commsAlternative',
+        title: 'Alternative communication methods',
+        options: ['Satellite phones', 'High-frequency radios', 'None']
+      },
+      {
+        label: 'comms-comments',
+        payloadLabel: 'commsComments',
+        title: 'Additional Comments',
+        textarea: true
+      }
+    ]
+  },
+  {
+    title: 'Connectivity',
+    formName: 'connectivity',
+    formEntries: [
+      {
+        label: 'connect-electricity',
+        payloadLabel: 'connectElectricity',
+        title: 'Electricity Availability',
+        options: [
+          'Stable grid supply',
+          'Occasional outages, backup available',
+          'Unstable grid, reliance on generators'
+        ]
+      },
+      {
+        label: 'connect-fuel-availability',
+        payloadLabel: 'connectFuelAvailability',
+        title: 'Fuel Availability for Generators',
+        options: [
+          'Sufficient (reliable supply chain)',
+          'Limited (supply chain disruptions possible)',
+          'Scarce (no reliable supply chain)'
+        ]
+      },
+      {
+        label: 'connect-backup-power',
+        payloadLabel: 'connectBackupPower',
+        title: 'Backup Power Sources',
+        options: [
+          'Solar panels (available and reliable)',
+          'Batteries (available but unreliable)',
+          'None'
+        ]
+      },
+      {
+        label: 'connect-local-control',
+        payloadLabel: 'connectLocalControl',
+        title: 'Local Control of Electricity Supply',
+        options: [
+          'Government-controlled grid',
+          'Independent local entities',
+          'No local control, dependent on external sources'
+        ]
+      },
+      {
+        label: 'connect-comments',
+        payloadLabel: 'connectComments',
+        title: 'Additional Comments',
+        textarea: true
+      }
+    ]
+  }
+]
+
+export { securityForm, infrastructureForm, communicationsForm }

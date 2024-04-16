@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import BoilerplateForm from '../components/BoilerplateForm.vue'
-import { infrastructureForm, securityForm } from '../components/index'
+import BoilerplateForm from '../components/BoilerplateForm.vue';
+import { infrastructureForm, securityForm, communicationsForm } from '../components/index';
 import { addItem, removeItem, getAllItems } from '@/stores/offlineWorker';
 import { checkLocationPermission } from '@/stores/geoLocation';
 
@@ -48,6 +48,7 @@ export default {
     return {
       infrastructureForm: infrastructureForm,
       securityForm: securityForm,
+      communicationsForm: communicationsForm,
       selectedForm: 'Infrastructure',
       items: []
     };
@@ -78,10 +79,11 @@ export default {
           return this.infrastructureForm
         case 'security':
           return this.securityForm
+        case 'communication':
+          return this.communicationsForm
         default:
         // code block
       }
-
     }
   }
 };
