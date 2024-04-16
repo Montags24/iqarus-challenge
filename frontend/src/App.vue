@@ -6,9 +6,7 @@ import { RouterView } from 'vue-router'
   <div class="bg-black">
     <!-- Header -->
     <header class="relative z-10">
-      <div class="sm:hidden">
-        <MobileHeader :onLine="onLine"></MobileHeader>
-      </div>
+      <MobileHeader :onLine="onLine"></MobileHeader>
     </header>
 
     <!-- Content -->
@@ -18,9 +16,7 @@ import { RouterView } from 'vue-router'
 
     <!-- Footer -->
     <footer class="relative z-10">
-      <div class="sm:hidden">
-        <MobileNavBar></MobileNavBar>
-      </div>
+      <MobileNavBar></MobileNavBar>
     </footer>
   </div>
 </template>

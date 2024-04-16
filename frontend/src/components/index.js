@@ -34,8 +34,8 @@ const securityForm = [
       {
         label: 'incidents-reported',
         payloadLabel: 'incidentsReported',
-        title: 'Reported Incidents',
-        options: ['Looting', 'Theft', 'Vandalism', 'Violence', 'No reported incidents']
+        title: 'Reported incidents',
+        options: ['Looting', 'Theft', 'Vandalism', 'Violence', 'No reported inclabelents']
       },
       {
         label: 'incidents-risk-to-relief',
@@ -53,4 +53,94 @@ const securityForm = [
   }
 ]
 
-export { securityForm }
+const infrastructureForm = [
+  {
+    title: 'Roads',
+    formEntries: [
+      {
+        title: 'Condition',
+        label: 'road-condition',
+        payloadLabel: 'roadCondition',
+        options: ['Clear', 'Damaged', 'Blocked']
+      },
+      {
+        title: 'Type of damage',
+        label: 'road-damage',
+        payloadLabel: 'roadDamage',
+        options: ['Flooded', 'Debris', 'Collapsed', 'None']
+      },
+      {
+        title: 'Accessibility',
+        label: 'road-access',
+        payloadLabel: 'roadAccess',
+        options: ['Passable', 'Impassable']
+      },
+      {
+        label: 'road-comments',
+        payloadLabel: 'roadComments',
+        title: 'Additional Comments',
+        textarea: true
+      }
+    ]
+  },
+  {
+    title: 'Buildings',
+    formEntries: [
+      {
+        title: 'Structural Integrity',
+        label: 'building-integrity',
+        payloadLabel: 'buildingIntegrity',
+        options: ['Intact', 'Damaged', 'Collapsed']
+      },
+      {
+        title: 'Type',
+        label: 'building-type',
+        payloadLabel: 'buildingType',
+        options: ['Reslabelential', 'Commercial', 'Government', 'None']
+      },
+      {
+        title: 'Damage Assessment',
+        label: 'building-damage',
+        payloadLabel: 'buildingDamage',
+        options: ['Minor', 'Moderate', 'Severe']
+      },
+      {
+        label: 'building-comments',
+        payloadLabel: 'buildingComments',
+        title: 'Additional Comments',
+        textarea: true
+      }
+    ]
+  },
+  {
+    title: 'Utilities',
+    formEntries: [
+      {
+        title: 'Power Supply',
+        label: 'utility-power',
+        payloadLabel: 'utilityPower',
+        options: ['Available', 'Outages', 'Generators']
+      },
+      {
+        title: 'Water Supply',
+        label: 'utility-water',
+        payloadLabel: 'utilityWater',
+        options: ['Functional', 'Contaminated', 'Shortages']
+      },
+      {
+        title: 'Communications',
+        label: 'utility-comms',
+        payloadLabel: 'utilityComms',
+        options: ['Functional', 'Cell Service Only', 'Internet Connectivity', 'Limited']
+      },
+      {
+        label: 'utility-comments',
+        payloadLabel: 'utilityComments',
+        title: 'Additional Comments',
+        textarea: true
+      }
+    ]
+  }
+]
+
+export { securityForm, infrastructureForm }
