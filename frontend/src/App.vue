@@ -35,6 +35,14 @@ export default {
       onLine: navigator.onLine
     }
   },
+  watch: {
+    // whenever onLine changes from false to true - try to send cached entries to server
+    onLine(newStatus) {
+      if (newStatus) {
+        console.log("Back online")
+      }
+    }
+  },
   methods: {
     handleOnlineStatus() {
       this.onLine = navigator.onLine;
