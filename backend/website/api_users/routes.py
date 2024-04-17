@@ -5,6 +5,7 @@ from website import db
 from website.api_users import bp
 from website.models import User
 from werkzeug.security import generate_password_hash
+from website.pii_data_handler import encrypt_data
 
 
 # User CRUD
@@ -31,8 +32,8 @@ def create_user():
 
         # create user and set attributes
         new_user_record = User(
-            name=new_user_credentials["name"],
-            email=new_user_credentials["email"],
+            name=encrypt_data(new_user_credentials["name"]),
+            email=encrypt_data(new_user_credentials["email"]),
             hashed_password=new_user_credentials["hashed_password"],
         )
 

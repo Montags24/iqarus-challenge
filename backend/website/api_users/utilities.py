@@ -15,7 +15,7 @@ def get_user_by_email(email: str) -> str | None:
 
     try:
         # Perform database query
-        user = User.query.filter_by(email=encrypted_email).first()
+        user = User.query.filter_by(email=f"{encrypted_email}").first()
 
         # Check if user is found
         if user:

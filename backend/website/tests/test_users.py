@@ -34,15 +34,15 @@ def client():
 
 def test_create_user(client):
     route = "api/users/"
-    # token = secrets.token_urlsafe(5)
-    # password = secrets.token_urlsafe(10)
+    token = secrets.token_urlsafe(5)
+    password = secrets.token_urlsafe(10)
     new_user_credentials = dict(
-        name="test_api_user",
-        email="test_api_user_@example.com",
-        password="fake_password",
+        name=f"test_api_user_{token}",
+        email=f"ftest_api_user_{token}@example.com",
+        password=f"{password}",
     )
     payload_kwargs = dict(new_user_credentials=new_user_credentials)
     response = client.post(route, json=payload_kwargs)
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json["message"] == "The user was successfully created."
