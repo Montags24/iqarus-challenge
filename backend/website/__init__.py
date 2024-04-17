@@ -33,9 +33,13 @@ def create_app():
         db.init_app(app)
         migrate.init_app(app, db=db)
 
-        from website import routes, models
+        from website.api_users import bp as users_bp
 
-        # To satisfy pylint
-        routes, models = routes, models
+        app.register_blueprint(users_bp, url_prefix="/api/users")
+
+        # from website import routes, models
+
+        # # To satisfy pylint
+        # routes, models = routes, models
 
         return app

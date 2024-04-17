@@ -1,4 +1,4 @@
-from pii_data_handler import encrypt_data
+from website.pii_data_handler import encrypt_data
 from website.models import User
 
 
@@ -15,7 +15,7 @@ def get_user_by_email(email: str) -> str | None:
 
     try:
         # Perform database query
-        user = User.query.filter_by(email=encrypted_email, is_deleted=False).first()
+        user = User.query.filter_by(email=encrypted_email).first()
 
         # Check if user is found
         if user:
