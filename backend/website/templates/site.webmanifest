@@ -1,6 +1,6 @@
 {
-  "name": "ResQHub",
-  "short_name": "ResQHub",
+  "name": "App",
+  "short_name": "App",
   "icons": [
     {
       "src": "/pwa-192x192.png",
@@ -29,6 +29,6 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#FFFFFF"
+  "background_color": "#000000",
+  "theme_color": "#000000"
 }
