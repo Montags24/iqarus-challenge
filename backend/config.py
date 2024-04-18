@@ -22,19 +22,25 @@ class Config:
     DB_TYPE = os.environ.get("DB_TYPE")
     DB_NAME = os.environ.get("DB_NAME")
 
-    SQLALCHEMY_DATABASE_URI = (
-        f"{DB_TYPE}://"
-        + DB_USERNAME
-        + ":"
-        + DB_PASSWORD
-        + "@"
-        + DB_ADDRESS
-        + ":"
-        + DB_PORT
-        + "/"
-        + DB_NAME
-    )
+    RENDER_DB_ADDRESS = os.environ.get("RENDER_DB_ADDRESS")
+
+    if INSTANCE_TYPE == "development":
+        SQLALCHEMY_DATABASE_URI = (
+            f"{DB_TYPE}://"
+            + DB_USERNAME
+            + ":"
+            + DB_PASSWORD
+            + "@"
+            + DB_ADDRESS
+            + ":"
+            + DB_PORT
+            + "/"
+            + DB_NAME
+        )
+    elif INSTANCE_TYPE == "production":
+        SQLALCHEMY_DATABASE_URI = RENDER_DB_ADDRESS
 
 
 if __name__ == "__main__":
     config = Config()
+    pass
