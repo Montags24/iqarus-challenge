@@ -1,11 +1,6 @@
-import { reactive } from 'vue'
-
 class User {
-  constructor () {
-    this.domain_origin = window.location.origin
-    if (this.domain_origin.slice(-5) == ':5173') {
-      this.domain_origin = this.domain_origin.replace(':5173', ':5000')
-    }
+  constructor (domainOrigin) {
+    this.domain_origin = domainOrigin
     this.id = ''
     this.name = ''
     this.username = ''
@@ -15,12 +10,15 @@ class User {
     this.session_jwt = ''
   }
 
-  async api_register (name, username, password) {
+  async api_register (payload) {
+    console.log('In api_register')
     const new_user_credentials = {
-      name: name,
-      username: username,
-      password: password
+      name: payload.name,
+      username: payload.username,
+      password: payload.password
     }
+
+    console.log(new_user_credentials)
 
     const request_options = {
       method: 'POST',
@@ -47,4 +45,4 @@ class User {
   }
 }
 
-export const user = reactive(new User())
+export default User

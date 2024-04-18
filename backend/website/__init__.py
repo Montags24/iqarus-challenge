@@ -3,6 +3,8 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -24,6 +26,9 @@ def create_app():
         instance_relative_config=False,
         static_folder=static_folder,
     )
+
+    # enable CORS
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # app.config.from_object("config.Config")
     app.config.from_object(Config)

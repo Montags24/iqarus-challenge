@@ -2,11 +2,6 @@ import os
 from dotenv import load_dotenv
 from flask import current_app as app
 from flask import render_template
-from flask_cors import CORS
-
-
-# enable CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
 
