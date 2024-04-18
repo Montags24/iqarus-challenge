@@ -22,7 +22,7 @@ def create_user():
     # check if user exists already
     user = User.query.filter_by(username=new_user_credentials["username"]).first()
     if user is not None:
-        return jsonify(message="This email is already in use"), 409
+        return jsonify(message="This username is already in use"), 409
 
     try:
         # hash password
