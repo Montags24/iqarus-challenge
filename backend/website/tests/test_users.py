@@ -50,3 +50,9 @@ def test_create_user(client):
 
     user = User.query.filter_by(username=new_user_credentials["username"]).first()
     assert user
+
+    # Delete user
+    User.query.filter_by(username=new_user_credentials["username"]).delete()
+    db.session.commit()
+    user = User.query.filter_by(username=new_user_credentials["username"]).first()
+    assert user is None
