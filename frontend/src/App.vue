@@ -1,17 +1,29 @@
 <script setup>
 import { RouterView } from 'vue-router'
+import { reactive } from 'vue';
+
+import User from './stores/User';
+
+// when we are developing using localhost on port 5173 (vue's default port),
+// to integrate with the flask backend, we need to modify the port to 5000 (flask default port)
+let domainOrigin = window.location.origin
+if (domainOrigin.slice(-5) == ":5173") {
+  domainOrigin = domainOrigin.replace(":5173", ":5000")
+}
+
+const user = reactive(new User(domainOrigin))
 </script>
 
 <template>
-  <div class="bg-black">
+  <div class="bg-black min-h-screen">
     <!-- Header -->
     <header class="relative z-10">
       <MobileHeader :onLine="onLine"></MobileHeader>
     </header>
 
     <!-- Content -->
-    <main class="relative z-0 max-container">
-      <RouterView :onLine="onLine" />
+    <main class="relative z-0">
+      <RouterView :onLine="onLine" :user="user" />
     </main>
 
     <!-- Footer -->

@@ -1,11 +1,6 @@
-import { reactive } from 'vue'
-
 class User {
-  constructor () {
-    this.domain_origin = window.location.origin
-    if (this.domain_origin.slice(-5) == ':5173') {
-      this.domain_origin = this.domain_origin.replace(':5173', ':5000')
-    }
+  constructor (domainOrigin) {
+    this.domain_origin = domainOrigin
     this.id = ''
     this.name = ''
     this.username = ''
@@ -15,12 +10,15 @@ class User {
     this.session_jwt = ''
   }
 
-  async api_register (name, username, password) {
+  async api_register (payload) {
+    console.log('In api_register')
     const new_user_credentials = {
-      name: name,
-      username: username,
-      password: password
+      name: payload.name,
+      username: payload.username,
+      password: payload.password
     }
+
+    console.log(new_user_credentials)
 
     const request_options = {
       method: 'POST',
@@ -37,14 +35,24 @@ class User {
       const response = await fetch(url, request_options)
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || 'Network response was not ok')
+        // Throw an error object containing both the status code and the error message
+        throw {
+          status: response.status,
+          message: errorData.message || 'Network response was not ok'
+        }
       }
       const api_object = await response.json()
       return api_object.new_user
     } catch (error) {
-      throw new Error('Failed to add user: ' + error.message)
+      // If the error object contains a status code, return it along with the error message
+      if (error.status) {
+        throw { status: error.status }
+      } else {
+        // Otherwise, just return the error message
+        throw new Error('Failed to add user: ' + error.message)
+      }
     }
   }
 }
 
-export const user = reactive(new User())
+export default User

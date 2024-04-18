@@ -42,8 +42,8 @@ def test_create_user(client):
         username=f"test_api_username_{token}",
         password=f"{password}",
     )
-    payload_kwargs = dict(new_user_credentials=new_user_credentials)
-    response = client.post(route, json=payload_kwargs)
+
+    response = client.post(route, json=new_user_credentials)
 
     assert response.status_code == 201
     assert response.json["message"] == "The user was successfully created."
