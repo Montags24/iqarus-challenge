@@ -20,11 +20,12 @@ def create_app():
 
     # Set the paths so that Flask knows where to look to serve up the static files
     this_directory = os.path.abspath(os.path.dirname(__file__))
-    static_folder = os.path.join(this_directory, "templates", "assets")
+    static_folder = os.path.join(this_directory, "templates", "static")
     app = Flask(
         __name__,
         instance_relative_config=False,
         static_folder=static_folder,
+        static_url_path="/static",
     )
 
     # enable CORS
@@ -41,6 +42,10 @@ def create_app():
         from website.api_users import bp as users_bp
 
         app.register_blueprint(users_bp, url_prefix="/api/users")
+
+        from website.frontend import bp as frontend_bp
+
+        app.register_blueprint(frontend_bp, url_prefix="/")
 
         # from website import routes, models
 
