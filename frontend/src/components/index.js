@@ -5,25 +5,25 @@ const securityForm = [
     formEntries: [
       {
         label: 'risk-armed-groups',
-        payloadLabel: 'riskArmedGroups',
+        payloadLabel: 'armedGroupsPresence',
         title: 'Presence of armed groups',
         options: ['Present', 'Absent', 'Unknown']
       },
       {
         label: 'risk-report',
-        payloadLabel: 'riskReport',
+        payloadLabel: 'reportOfViolence',
         title: 'Reports of violence or unrest',
         options: ['Confirmed', 'Suspected', 'Not reported']
       },
       {
         label: 'risk-local-enforcement',
-        payloadLabel: 'riskLocalEnforcement',
+        payloadLabel: 'localEnforcementPresence',
         title: 'Law enforcement or military presence',
         options: ['Present', 'Absent', 'Unknown']
       },
       {
         label: 'risk-comments',
-        payloadLabel: 'riskComments',
+        payloadLabel: 'securityRiskComments',
         title: 'Additional Comments',
         textarea: true
       }
@@ -41,7 +41,7 @@ const securityForm = [
       },
       {
         label: 'incidents-risk-to-relief',
-        payloadLabel: 'incidentsRiskToRelief',
+        payloadLabel: 'riskToRelief',
         title: 'Security incidents affecting relief efforts',
         options: ['High risk', 'Moderate risk', 'Low risk', 'Unknown']
       },
