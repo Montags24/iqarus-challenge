@@ -4,7 +4,8 @@
     </div>
     <section class="mt-12 mb-16 pt-3 bg-black">
 
-        <RegisterUser v-if="!user.logged_in" @submitRegistration="submitRegistration"></RegisterUser>
+        <RegisterUser v-if="!user.logged_in" @submitRegistration="submitRegistration" :usernameInUse="usernameInUse">
+        </RegisterUser>
     </section>
 </template>
 
@@ -22,13 +23,27 @@ export default {
     components: {
         RegisterUser,
     },
+    data() {
+        return {
+            usernameInUse: false
+        }
+    },
     methods: {
         async submitRegistration(payload) {
             try {
+                this.usernameInUse = false
                 const user = await this.user.api_register(payload)
-                console.log(user)
             } catch (error) {
-                console.log(error)
+                console.log(error.status)
+                if (error.status === 409) {
+                    this.usernameInUse = true
+                } else if (error.status === 404) {
+                    // Handle not found error (404)
+                    console.log("Not found error:", error);
+                } else {
+                    // Handle other errors
+                    console.log("Other error:", error);
+                }
             }
 
         }

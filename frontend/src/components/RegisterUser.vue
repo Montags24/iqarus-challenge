@@ -14,8 +14,9 @@
                 Username
             </label>
             <input
-                class="shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3"
-                id="username" type="text" v-model="username">
+                class="shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                :class="{ 'mb-3': !usernameInUse }" id="username" type="text" v-model="username">
+            <span v-if="usernameInUse" class="text-red-500 mb-3">[Username already taken]</span>
             <label class="block uppercase text-white text-sm mb-2" for="password">
                 Password
             </label>
@@ -43,6 +44,11 @@
 <script>
 export default {
     emits: ['submitRegistration'],
+    props: {
+        usernameInUse: {
+            type: Boolean,
+        },
+    },
     data() {
         return {
             name: '',

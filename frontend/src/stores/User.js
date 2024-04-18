@@ -35,12 +35,22 @@ class User {
       const response = await fetch(url, request_options)
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || 'Network response was not ok')
+        // Throw an error object containing both the status code and the error message
+        throw {
+          status: response.status,
+          message: errorData.message || 'Network response was not ok'
+        }
       }
       const api_object = await response.json()
       return api_object.new_user
     } catch (error) {
-      throw new Error('Failed to add user: ' + error.message)
+      // If the error object contains a status code, return it along with the error message
+      if (error.status) {
+        throw { status: error.status }
+      } else {
+        // Otherwise, just return the error message
+        throw new Error('Failed to add user: ' + error.message)
+      }
     }
   }
 }
