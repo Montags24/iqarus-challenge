@@ -67,7 +67,7 @@ export default defineConfig({
   },
   build: {
     outDir: path.resolve(__dirname, '../backend/website/templates/'),
-    assetsDir: './static/assets',
+    assetsDir: './assets',
     sourcemap: 'inline',
     emptyOutDir: true
   }

@@ -20,12 +20,11 @@ def create_app():
 
     # Set the paths so that Flask knows where to look to serve up the static files
     this_directory = os.path.abspath(os.path.dirname(__file__))
-    static_folder = os.path.join(this_directory, "templates", "static")
+    static_folder = os.path.join(this_directory, "templates", "assets")
     app = Flask(
         __name__,
         instance_relative_config=False,
         static_folder=static_folder,
-        static_url_path="/static",
     )
 
     # enable CORS
