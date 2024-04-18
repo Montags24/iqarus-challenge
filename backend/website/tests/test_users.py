@@ -7,6 +7,7 @@ from website import create_app, db
 from website.models import (
     User,
 )
+from website.pii_data_handler import encrypt_data
 
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
@@ -38,7 +39,7 @@ def test_create_user(client):
     password = secrets.token_urlsafe(10)
     new_user_credentials = dict(
         name=f"test_api_user_{token}",
-        email=f"ftest_api_user_{token}@example.com",
+        username=f"test_api_username_{token}",
         password=f"{password}",
     )
     payload_kwargs = dict(new_user_credentials=new_user_credentials)
@@ -46,3 +47,6 @@ def test_create_user(client):
 
     assert response.status_code == 201
     assert response.json["message"] == "The user was successfully created."
+
+    user = User.query.filter_by(username=new_user_credentials["username"]).first()
+    assert user

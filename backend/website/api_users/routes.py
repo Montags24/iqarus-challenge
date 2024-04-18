@@ -20,7 +20,7 @@ def create_user():
         return jsonify(message="An error occured"), 500
 
     # check if user exists already
-    user = website.api_users.utilities.get_user_by_email(new_user_credentials["email"])
+    user = User.query.filter_by(username=new_user_credentials["username"]).first()
     if user is not None:
         return jsonify(message="This email is already in use"), 409
 
@@ -31,12 +31,10 @@ def create_user():
         )
 
         # create user and set attributes
-        new_user_record = User(
-            name=encrypt_data(new_user_credentials["name"]),
-            email=encrypt_data(new_user_credentials["email"]),
-            hashed_password=new_user_credentials["hashed_password"],
-        )
-
+        new_user_record = User()
+        for name, value in new_user_credentials.items():
+            if hasattr(new_user_record, name):
+                setattr(new_user_record, name, value)
         db.session.add(new_user_record)
         db.session.commit()
         user_dict = new_user_record.get_dict()
