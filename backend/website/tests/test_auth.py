@@ -31,7 +31,7 @@ def client():
 #     return headers
 
 
-def test_login(client):
+def test_successful_login(client):
     # Create a user
     route = "api/users/"
     token = secrets.token_urlsafe(5)
@@ -59,6 +59,42 @@ def test_login(client):
 
     response = client.post(route, json=login_package)
     assert response.status_code == 200
+
+    # Delete user
+    User.query.filter_by(username=new_user_credentials["username"]).delete()
+    db.session.commit()
+    user = User.query.filter_by(username=new_user_credentials["username"]).first()
+    assert user is None
+
+
+def test_login_incorrect_password(client):
+    # Create a user
+    route = "api/users/"
+    token = secrets.token_urlsafe(5)
+    password = secrets.token_urlsafe(10)
+    new_user_credentials = dict(
+        name=f"test_api_user_{token}",
+        username=f"test_api_username_{token}",
+        password=f"{password}",
+    )
+
+    response = client.post(route, json=new_user_credentials)
+
+    assert response.status_code == 201
+    assert response.json["message"] == "The user was successfully created."
+
+    user = User.query.filter_by(username=new_user_credentials["username"]).first()
+    assert user
+
+    # Attempt login with incorrect password
+    route = "api/auth/login"
+    login_package = {
+        "username": new_user_credentials["username"],
+        "password": "fake_password",
+    }
+
+    response = client.post(route, json=login_package)
+    assert response.status_code == 401
 
     # Delete user
     User.query.filter_by(username=new_user_credentials["username"]).delete()
