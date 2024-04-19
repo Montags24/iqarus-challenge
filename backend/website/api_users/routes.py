@@ -3,7 +3,6 @@ from website import db
 from website.api_users import bp
 from website.models import User
 from werkzeug.security import generate_password_hash
-from website.pii_data_handler import encrypt_data
 
 
 # User CRUD

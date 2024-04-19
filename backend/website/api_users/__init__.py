@@ -10,3 +10,5 @@ bp = Blueprint(
 )
 
 from website.api_users import routes
+
+routes = routes

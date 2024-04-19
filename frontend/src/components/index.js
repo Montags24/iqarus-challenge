@@ -100,7 +100,7 @@ const infrastructureForm = [
         title: 'Type',
         label: 'building-type',
         payloadLabel: 'buildingType',
-        options: ['Reslabelential', 'Commercial', 'Government', 'None']
+        options: ['Residential', 'Commercial', 'Government', 'None']
       },
       {
         title: 'Damage Assessment',

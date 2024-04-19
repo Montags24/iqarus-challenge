@@ -30,7 +30,7 @@
                 <input
                     class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="password2" type="password" v-model="password2">
-                <span v-if="checkPassword()" class="text-red-500">[Passwords must match]</span>
+                <span v-if="checkPassword()" class="text-red-500 text-sm">[Passwords must match]</span>
             </div>
 
             <button class="bg-orange-500 text-white font-bold py-1 px-4 rounded"
@@ -72,7 +72,7 @@ export default {
             return !this.name || !this.username || !this.password || !this.password2 || this.checkPassword()
         },
         checkPassword() {
-            return !this.password2 || this.password != this.password2
+            return this.password2 && this.password != this.password2
         }
     },
 
