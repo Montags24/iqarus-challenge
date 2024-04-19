@@ -1,17 +1,29 @@
 <template>
-    <div v-if="!onLine" class="mt-12 px-3 py-3 block uppercase text-white text-md font-bold bg-slate-400 text-center">
-        No accesss in offline mode
-    </div>
-    <section class="mt-12 mb-16 pt-3 bg-black">
-
-        <RegisterUser v-if="!user.logged_in || !onLine" @submitRegistration="submitRegistration"
-            :usernameInUse="usernameInUse">
-        </RegisterUser>
+    <section v-if="!user.logged_in" class="mt-12 pt-6 ">
+        <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
+            <label class="block uppercase text-white text-sm mb-2" for="username">Username</label>
+            <input
+                class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline mb-3"
+                id="username" type="text" v-model="username">
+            <label class="block uppercase text-white text-sm mb-2" for="password">Password</label>
+            <input
+                class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline mb-3"
+                id="password" type="password" v-model="password">
+            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-4 rounded"
+                @click="submitForm">Sign in</button>
+        </div>
+        <div
+            class=" mt-5 max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
+            <label class="block uppercase text-white text-sm mb-2" for="username">Not registered?</label>
+            <RouterLink to="/register">
+                <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-4 rounded w-full"
+                    @click="submitForm">Create an account</button>
+            </RouterLink>
+        </div>
     </section>
 </template>
 
 <script>
-import RegisterUser from '@/components/RegisterUser.vue';
 export default {
     props: {
         user: {
@@ -22,29 +34,13 @@ export default {
         }
     },
     components: {
-        RegisterUser,
     },
     data() {
         return {
-            usernameInUse: false
         }
     },
     methods: {
-        async submitRegistration(payload) {
-            try {
-                this.usernameInUse = false
-                const user = await this.user.api_register(payload)
-            } catch (error) {
-                console.log(error.status)
-                if (error.status === 409) {
-                    this.usernameInUse = true
-                } else {
-                    // Handle other errors
-                    console.log("Other error:", error);
-                }
-            }
 
-        }
     },
 
 

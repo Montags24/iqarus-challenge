@@ -1,6 +1,6 @@
 <template>
-  <section class="mt-12 mb-16 pt-4 bg-black">
-    <form class="w-full max-w-lg flex flex-col" @submit.prevent>
+  <section class="mt-12 mb-16 pt-4">
+    <form class="w-full max-w-lg mx-auto flex flex-col" @submit.prevent>
       <div class="w-full px-3 mb-6">
         <label class="block uppercase text-white text-md font-bold mb-2" for="grid-state">
           Category
