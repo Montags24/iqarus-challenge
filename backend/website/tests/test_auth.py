@@ -2,7 +2,6 @@ import pytest
 import secrets
 import os
 from dotenv import load_dotenv
-from sqlalchemy import true
 from website import create_app, db
 from website.models import (
     User,
@@ -32,7 +31,8 @@ def client():
 #     return headers
 
 
-def test_create_user(client):
+def test_login(client):
+    # Create a user
     route = "api/users/"
     token = secrets.token_urlsafe(5)
     password = secrets.token_urlsafe(10)
@@ -49,6 +49,16 @@ def test_create_user(client):
 
     user = User.query.filter_by(username=new_user_credentials["username"]).first()
     assert user
+
+    # Attempt login
+    route = "api/auth/login"
+    login_package = {
+        "username": new_user_credentials["username"],
+        "password": password,
+    }
+
+    response = client.post(route, json=login_package)
+    assert response.status_code == 200
 
     # Delete user
     User.query.filter_by(username=new_user_credentials["username"]).delete()
