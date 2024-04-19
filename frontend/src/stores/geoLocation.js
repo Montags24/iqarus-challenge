@@ -1,41 +1,30 @@
 function checkLocationPermission () {
   if ('permissions' in navigator && 'geolocation' in navigator) {
-    // Check if permission is already granted
-    navigator.permissions.query({ name: 'geolocation' }).then(function (permissionStatus) {
+    return navigator.permissions.query({ name: 'geolocation' }).then(function (permissionStatus) {
       if (permissionStatus.state === 'granted') {
-        // Permission already granted, get the user's location
-        getLocation()
+        // Permission already granted, return a Promise resolving to the user's location
+        return getLocation()
       } else {
         // Permission not granted, ask the user for permission
-        navigator.geolocation.getCurrentPosition(getLocation, function (error) {
-          console.error('Error getting location:', error)
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject)
         })
       }
     })
   } else if ('geolocation' in navigator) {
     // Geolocation is available but permissions API is not supported
-    getLocation()
+    return getLocation()
   } else {
     // Geolocation is not available
     console.error('Geolocation is not supported by this browser.')
+    return Promise.reject('Geolocation is not supported by this browser.')
   }
 }
 
 function getLocation () {
-  navigator.geolocation.getCurrentPosition(
-    function (position) {
-      const latitude = position.coords.latitude
-      const longitude = position.coords.longitude
-
-      return { latitude: latitude, longitude: longitude }
-
-      // You can now use latitude and longitude in your application
-    },
-    function (error) {
-      // Handle any errors that occur when trying to get the user's location
-      console.error('Error getting location:', error)
-    }
-  )
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
 }
 
 export { checkLocationPermission }

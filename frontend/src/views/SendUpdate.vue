@@ -54,13 +54,23 @@ export default {
     };
   },
   methods: {
-    submitForm(payload) {
-      if (this.onLine) {
-        console.log(`I am online! ${payload}`)
-        const userPosition = checkLocationPermission()
-        console.log(userPosition)
+    async submitForm(payload) {
+      if (navigator.onLine) {
+        console.log(`I am online! ${payload}`);
+        try {
+          const userPosition = await checkLocationPermission();
+          console.log("Latitude: " + userPosition.coords.latitude);
+          console.log("Longitude: " + userPosition.coords.longitude);
+          console.log("Timestamp: " + userPosition.timestamp);
+          const date = new Date(userPosition.timestamp);
+          console.log(date);
+          // Do something with userPosition
+        } catch (error) {
+          console.error('Error getting location:', error);
+          // Handle error
+        }
       } else {
-        this.addItemToDb(JSON.stringify(payload))
+        this.addItemToDb(JSON.stringify(payload));
       }
     },
     async addItemToDb(payload) {
