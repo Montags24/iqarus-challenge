@@ -57,7 +57,8 @@ export default {
     submitForm(payload) {
       if (this.onLine) {
         console.log(`I am online! ${payload}`)
-        checkLocationPermission()
+        const userPosition = checkLocationPermission()
+        console.log(userPosition)
       } else {
         this.addItemToDb(JSON.stringify(payload))
       }

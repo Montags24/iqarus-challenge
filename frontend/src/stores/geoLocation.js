@@ -27,8 +27,7 @@ function getLocation () {
       const latitude = position.coords.latitude
       const longitude = position.coords.longitude
 
-      console.log('Latitude:', latitude)
-      console.log('Longitude:', longitude)
+      return { latitude: latitude, longitude: longitude }
 
       // You can now use latitude and longitude in your application
     },

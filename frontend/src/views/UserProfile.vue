@@ -9,7 +9,7 @@
             <input
                 class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline"
                 :class="{ 'mb-3': !incorrectCredentials }" id="password" type="password" v-model="password">
-            <span v-if="incorrectCredentials" class="text-red-500 text-sm mb-3">[Incorrect username or password]</span>
+            <span v-if="incorrectCredentials" class="text-red-500 text-sm mb-3">[{{ errorMessage }}]</span>
             <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-4 rounded" @click="login">Sign
                 in</button>
         </div>
@@ -58,18 +58,24 @@ export default {
             username: '',
             password: '',
             incorrectCredentials: false,
+            errorMessage: '',
         }
     },
     methods: {
         async login() {
             try {
-                const response = await this.user.api_login(this.username, this.password)
+                await this.user.api_login(this.username, this.password)
                 this.incorrectCredentials = false
-                console.log(response)
+                this.$toast.success('Login successful')
+                this.$router.push('/')
             } catch (error) {
                 console.log(error.status)
                 if (error.status === 401) {
                     this.incorrectCredentials = true
+                    this.errorMessage = "Incorrect username or password"
+                } else if (error.status === 404) {
+                    this.incorrectCredentials = true
+                    this.errorMessage = "User not found"
                 } else {
                     // Handle other errors
                     console.log("Other error:", error);
