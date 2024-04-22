@@ -17,14 +17,18 @@
                             </option>
                         </select>
                         <textarea v-else
-                            class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline mb-3"
-                            :id="entry.label" v-model="payload[entry.payloadLabel]" rows="4"></textarea>
+                            class="shadow bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                            :id="entry.label" v-model="payload[entry.payloadLabel]" rows="4" maxlength="250"></textarea>
                         <div v-if="!entry.textarea"
                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                             </svg>
                         </div>
+                        <span v-if="entry.textarea" class="text-sm">{{ payload[entry.payloadLabel] ?
+                            payload[entry.payloadLabel].length
+                            : 0
+                            }}/250</span>
                     </div>
                 </div>
             </div>
