@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 from datetime import datetime
 from dotenv import load_dotenv
 from website import db
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.sql import func
 from sqlalchemy_utils import EncryptedType
 
@@ -42,10 +42,10 @@ class User(db.Model):
 
 class Organisation(db.Model):
     __tablename__ = "organisations"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
-    code = db.Column(db.String(30), unique=True, nullable=False)
-    timestamp = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True, nullable=False)
+    code = Column(String(30), unique=True, nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
     def get_dict(self):
         return dict(
@@ -58,27 +58,27 @@ class Organisation(db.Model):
 
 class SecurityForm(db.Model):
     __tablename__ = "security_form"
-    id = db.Column(db.Integer, primary_key=True)
-    longitude = db.Column(db.Float)
-    latitude = db.Column(db.Float)
-    timestamp = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+    id = Column(Integer, primary_key=True)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
     # Maps to the user table
-    user_id = db.Column(
-        db.Integer,
+    user_id = Column(
+        Integer,
         ForeignKey(
             "users.id",
             name=f"fk_{__tablename__}_users",
             ondelete="CASCADE",
         ),
     )
-    armedGroupsPresence = db.Column(db.String(50))
-    reportOfViolence = db.Column(db.String(50))
-    localEnforcementPresence = db.Column(db.String(50))
-    securityRiskComments = db.Column(db.String(500))
-    incidentsReported = db.Column(db.String(50))
-    riskToRelief = db.Column(db.String(50))
-    incidentsComments = db.Column(db.String(500))
+    armedGroupsPresence = Column(String(50))
+    reportOfViolence = Column(String(50))
+    localEnforcementPresence = Column(String(50))
+    securityRiskComments = Column(String(250))
+    incidentsReported = Column(String(50))
+    riskToRelief = Column(String(50))
+    incidentsComments = Column(String(250))
 
     def get_dict(self):
         return dict(

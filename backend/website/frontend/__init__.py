@@ -6,8 +6,7 @@ bp = Blueprint(
     f"{bp_folder}_bp",
     __name__,
     template_folder="templates",
-    static_folder="static",
-    static_url_path="/static",
+    static_folder="assets",
 )
 
 from website.frontend import routes

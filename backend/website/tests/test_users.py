@@ -7,7 +7,6 @@ from website import create_app, db
 from website.models import (
     User,
 )
-from website.pii_data_handler import encrypt_data
 
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))

@@ -37,7 +37,7 @@ const securityForm = [
         label: 'incidents-reported',
         payloadLabel: 'incidentsReported',
         title: 'Reported incidents',
-        options: ['Looting', 'Theft', 'Vandalism', 'Violence', 'No reported inclabelents']
+        options: ['Looting', 'Theft', 'Vandalism', 'Violence', 'No reported incidents']
       },
       {
         label: 'incidents-risk-to-relief',
@@ -100,7 +100,7 @@ const infrastructureForm = [
         title: 'Type',
         label: 'building-type',
         payloadLabel: 'buildingType',
-        options: ['Reslabelential', 'Commercial', 'Government', 'None']
+        options: ['Residential', 'Commercial', 'Government', 'None']
       },
       {
         title: 'Damage Assessment',

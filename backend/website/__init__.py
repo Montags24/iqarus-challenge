@@ -42,6 +42,10 @@ def create_app():
 
         app.register_blueprint(users_bp, url_prefix="/api/users")
 
+        from website.auth import bp as auth_bp
+
+        app.register_blueprint(auth_bp, url_prefix="/api/auth")
+
         from website.frontend import bp as frontend_bp
 
         app.register_blueprint(frontend_bp, url_prefix="/")
