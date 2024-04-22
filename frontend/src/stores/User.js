@@ -51,7 +51,7 @@ class User {
     }
   }
 
-  async api_login (username, password) {
+  async apiLogin (username, password) {
     console.log('In api_login')
     const payload = {
       username: username,
@@ -101,6 +101,47 @@ class User {
       } else {
         // Otherwise, just return the error message
         throw new Error('Failed to login')
+      }
+    }
+  }
+
+  async apiEditUser (editedName) {
+    console.log('In api_edit_user')
+
+    const payload = {
+      edited_name: editedName
+    }
+
+    const request_options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.sessionJwt}`
+      },
+      body: JSON.stringify(payload)
+    }
+
+    const url = this.domainOrigin + '/api/users/'
+
+    try {
+      const response = await fetch(url, request_options)
+      if (!response.ok) {
+        const errorData = await response.json() // Throw an error object containing both the status code and the error message
+        throw {
+          status: response.status,
+          message: errorData.message || 'Network response was not ok'
+        }
+      }
+      const apiObject = await response.json()
+      this.name = apiObject.user.name
+      return apiObject.user
+    } catch (error) {
+      // If the error object contains a status code, return it along with the error message
+      if (error.status) {
+        throw { status: error.status }
+      } else {
+        // Otherwise, just return the error message
+        throw new Error('Failed to edit user: ' + error.message)
       }
     }
   }

@@ -3,6 +3,7 @@ from website import db
 from website.api_users import bp
 from website.models import User
 from werkzeug.security import generate_password_hash
+from website.api_users.utilities import validate_user
 
 
 # User CRUD
@@ -21,7 +22,6 @@ def create_user():
         return jsonify(message="This username is already in use"), 409
 
     try:
-        # hash password
         api_package["hashed_password"] = generate_password_hash(api_package["password"])
 
         # create user and set attributes
@@ -41,9 +41,38 @@ def create_user():
         print(err)
         db.session.rollback()
         db.session.flush()  # for resetting non-commited .add()
-        return jsonify(message="The user was not added"), 500
+        return jsonify(message="An error occured creating a user"), 500
 
 
-@bp.route("/")
-def test():
-    return jsonify({"test": "ok"})
+@bp.route("/", methods=["PUT"])
+@validate_user
+def edit_user(**kwargs):
+    try:
+        api_package = request.get_json()
+        edited_name = api_package["edited_name"]
+    except KeyError:
+        return jsonify(message="Bad api request - please try again"), 400
+    except Exception:
+        return jsonify(message="An error occured"), 500
+
+    # get user from database using values from decoded JWT
+    user = User.query.filter_by(
+        username=kwargs["username"], id=kwargs["user_id"]
+    ).first()
+
+    try:
+        # set new name
+        setattr(user, "name", edited_name)
+        db.session.commit()
+
+        user_dict = user.get_dict()
+
+        return (
+            jsonify(message="The user was successfully created.", user=user_dict),
+            201,
+        )
+    except Exception as err:
+        print(err)
+        db.session.rollback()
+        db.session.flush()  # for resetting non-commited .add()
+        return jsonify(message="Error updating user details"), 500

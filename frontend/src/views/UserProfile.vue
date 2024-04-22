@@ -38,7 +38,7 @@
                 <div v-else class="px-4">
                     <input
                         class="bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline"
-                        v-model="nameToSave">
+                        v-model="editedName">
                 </div>
             </div>
         </div>
@@ -69,13 +69,13 @@ export default {
             incorrectCredentials: false,
             errorMessage: '',
             editingName: false,
-            nameToSave: ''
+            editedName: this.user.name
         }
     },
     methods: {
         async login() {
             try {
-                await this.user.api_login(this.username, this.password)
+                await this.user.apiLogin(this.username, this.password)
                 this.incorrectCredentials = false
                 this.$toast.success('Login successful')
                 this.$router.push('/')
@@ -96,13 +96,24 @@ export default {
         editName() {
             this.editingName = true
         },
-        saveName() {
+        async saveName() {
+            if (this.editedName != this.user.name) {
+                try {
+                    await this.user.apiEditUser(this.editedName)
+                    this.$toast.success('Profile updated')
+                } catch (error) {
+                    console.log(error.status)
+                    if (error.status === 401) {
+                        this.$toast.error('Error updating profile')
+                    } else {
+                        // Handle other errors
+                        console.log("Other error:", error);
+                    }
+                }
+            }
             this.editingName = false
         }
-
     },
-
-
 }
 </script>
 
