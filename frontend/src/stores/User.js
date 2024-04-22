@@ -6,6 +6,8 @@ class User {
     this.username = ''
     this.loggedIn = false
     this.sessionJwt = ''
+    this.latitude = ''
+    this.longitude = ''
   }
 
   async api_register (payload) {
