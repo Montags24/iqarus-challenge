@@ -24,13 +24,22 @@
     </section>
     <section v-if="user.loggedIn && onLine" class="mt-12 pt-6 pb-4">
         <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
-            <div class="flex mb-2">
-                <label class="block uppercase text-white text-sm" for="username">Username:</label>
-                <p class="px-4 text-sm">{{ user.username }}</p>
+            <div class="flex justify-between mb-2">
+                <div class="flex">
+                    <label class="block uppercase text-white text-sm" for="username">Username:</label>
+                    <p class="px-4 text-sm">{{ user.username }}</p>
+                </div>
+                <v-icon v-if="!editingName" name="fa-edit" class="hover:cursor-pointer" @click="editName" />
+                <v-icon v-else name="fa-save" class="hover:cursor-pointer" @click="saveName" />
             </div>
             <div class="flex mb-2">
                 <label class="block uppercase text-white text-sm" for="password">Name:</label>
-                <p class="px-4 text-sm">{{ user.name }}</p>
+                <p v-if="!editingName" class="px-4 text-sm">{{ user.name }}</p>
+                <div v-else class="px-4">
+                    <input
+                        class="bg-black appearance-none border border-gray-700 rounded w-full py-1 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                        v-model="nameToSave">
+                </div>
             </div>
         </div>
     </section>
@@ -59,6 +68,8 @@ export default {
             password: '',
             incorrectCredentials: false,
             errorMessage: '',
+            editingName: false,
+            nameToSave: ''
         }
     },
     methods: {
@@ -80,8 +91,13 @@ export default {
                     // Handle other errors
                     console.log("Other error:", error);
                 }
-
             }
+        },
+        editName() {
+            this.editingName = true
+        },
+        saveName() {
+            this.editingName = false
         }
 
     },

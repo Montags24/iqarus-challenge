@@ -13,10 +13,20 @@ import {
   FaMapMarkerAlt,
   FaUserAlt,
   HiSolidStatusOffline,
-  HiSolidStatusOnline
+  HiSolidStatusOnline,
+  FaEdit,
+  FaSave
 } from 'oh-vue-icons/icons'
 
-addIcons(IoSend, FaMapMarkerAlt, FaUserAlt, HiSolidStatusOffline, HiSolidStatusOnline)
+addIcons(
+  IoSend,
+  FaMapMarkerAlt,
+  FaUserAlt,
+  HiSolidStatusOffline,
+  HiSolidStatusOnline,
+  FaEdit,
+  FaSave
+)
 
 const app = createApp(App)
 
