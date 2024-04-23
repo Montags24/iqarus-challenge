@@ -83,9 +83,9 @@ class SecurityForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            longitude=self.longitude,
+            latitude=self.latitude,
             timestamp=self.timestamp,
-            name=self.name,
-            code=self.code,
             user_id=self.user_id,
             armedGroupsPresence=self.armedGroupsPresence,
             reportOfViolence=self.reportOfViolence,

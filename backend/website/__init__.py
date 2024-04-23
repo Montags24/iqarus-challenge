@@ -46,6 +46,10 @@ def create_app():
 
         app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
+        from website.api_forms import bp as forms_bp
+
+        app.register_blueprint(forms_bp, url_prefix="/api/forms")
+
         from website.frontend import bp as frontend_bp
 
         app.register_blueprint(frontend_bp, url_prefix="/")

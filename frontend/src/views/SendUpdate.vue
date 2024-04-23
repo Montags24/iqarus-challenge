@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <BoilerplateForm :formObj="loadForm()" @submitForm="submitForm"></BoilerplateForm>
+      <BoilerplateForm :formObj="selectedFormObj" @submitForm="submitForm"></BoilerplateForm>
     </form>
   </section>
 </template>
@@ -40,6 +40,9 @@ export default {
     BoilerplateForm,
   },
   props: {
+    user: {
+      type: Object,
+    },
     onLine: {
       type: Boolean,
     },
@@ -56,18 +59,20 @@ export default {
   methods: {
     async submitForm(payload) {
       if (navigator.onLine) {
-        console.log(`I am online! ${payload}`);
+        console.log(payload);
         try {
           const userPosition = await checkLocationPermission();
-          console.log("Latitude: " + userPosition.coords.latitude);
-          console.log("Longitude: " + userPosition.coords.longitude);
-          console.log("Timestamp: " + userPosition.timestamp);
-          const date = new Date(userPosition.timestamp);
-          console.log(date);
-          // Do something with userPosition
+          payload.latitude = userPosition.coords.latitude
+          payload.longitude = userPosition.coords.longitude
+          payload.timestamp = Date.now()
         } catch (error) {
           console.error('Error getting location:', error);
           // Handle error
+        }
+        try {
+          await this.user.apiSubmitForm(this.selectedForm.toLowerCase(), payload)
+        } catch (error) {
+          console.log(error)
         }
       } else {
         this.addItemToDb(JSON.stringify(payload));
@@ -84,16 +89,18 @@ export default {
         alert('Failed to add item');
       }
     },
-    loadForm() {
+  },
+  computed: {
+    selectedFormObj() {
       switch (this.selectedForm.toLowerCase()) {
         case 'infrastructure':
-          return this.infrastructureForm
+          return this.infrastructureForm;
         case 'security':
-          return this.securityForm
+          return this.securityForm;
         case 'communication':
-          return this.communicationsForm
+          return this.communicationsForm;
         default:
-        // code block
+          return null; // or handle the default case
       }
     }
   }
