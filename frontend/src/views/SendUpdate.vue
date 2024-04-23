@@ -71,8 +71,15 @@ export default {
         }
         try {
           await this.user.apiSubmitForm(this.selectedForm.toLowerCase(), payload)
+          this.$toast.success("Form successfully submitted")
         } catch (error) {
-          console.log(error)
+          console.log(error.status)
+          if (error.status === 401) {
+            this.$toast.warning('Please login first')
+          } else {
+            // Handle other errors
+            console.log("Other error:", error);
+          }
         }
       } else {
         this.addItemToDb(JSON.stringify(payload));

@@ -33,7 +33,9 @@ export default {
         async submitRegistration(payload) {
             try {
                 this.usernameInUse = false
-                const user = await this.user.api_register(payload)
+                await this.user.api_register(payload)
+                this.$toast.success('Registration successful. Please login')
+                this.$route.push('/login')
             } catch (error) {
                 console.log(error.status)
                 if (error.status === 409) {

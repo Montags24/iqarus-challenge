@@ -18,7 +18,7 @@ const user = reactive(new User(domainOrigin))
   <div class="bg-black min-h-screen">
     <!-- Header -->
     <header class="relative z-10">
-      <MobileHeader :onLine="onLine"></MobileHeader>
+      <MobileHeader :onLine="onLine" :user="user"></MobileHeader>
     </header>
 
     <!-- Content -->
@@ -28,7 +28,7 @@ const user = reactive(new User(domainOrigin))
 
     <!-- Footer -->
     <footer class="relative z-10">
-      <MobileNavBar></MobileNavBar>
+      <MobileNavBar :user="user"></MobileNavBar>
     </footer>
   </div>
 </template>
