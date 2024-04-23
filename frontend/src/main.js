@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ToastPlugin from 'vue-toast-notification'
 
+import App from './App.vue'
+import router from './router'
 import './index.css'
 import 'vue-toast-notification/dist/theme-default.css'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
@@ -15,12 +17,6 @@ import {
   FaEdit,
   FaSave
 } from 'oh-vue-icons/icons'
-
-// Import App component lazily
-const App = () => import('./App.vue')
-
-// Import router lazily
-const router = () => import('./router')
 
 addIcons(
   IoSend,

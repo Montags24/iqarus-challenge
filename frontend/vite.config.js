@@ -74,8 +74,8 @@ export default defineConfig({
     assetsDir: './assets',
     sourcemap: 'inline',
     emptyOutDir: true
-  },
-  optimizeDeps: {
-    exclude: ['oh-vue-icons/icons']
   }
+  // optimizeDeps: {
+  //   exclude: ['oh-vue-icons/icons']
+  // }
 })
