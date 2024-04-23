@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SendUpdate from '../views/SendUpdate.vue'
+import SendUpdate from '@/views/SendUpdate.vue'
 import MapView from '@/views/MapView.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import RegisterView from '@/views/RegisterView.vue'

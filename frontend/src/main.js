@@ -6,27 +6,6 @@ import App from './App.vue'
 import router from './router'
 import './index.css'
 import 'vue-toast-notification/dist/theme-default.css'
-import { OhVueIcon, addIcons } from 'oh-vue-icons'
-
-import {
-  IoSend,
-  FaMapMarkerAlt,
-  FaUserAlt,
-  HiSolidStatusOffline,
-  HiSolidStatusOnline,
-  FaEdit,
-  FaSave
-} from 'oh-vue-icons/icons'
-
-addIcons(
-  IoSend,
-  FaMapMarkerAlt,
-  FaUserAlt,
-  HiSolidStatusOffline,
-  HiSolidStatusOnline,
-  FaEdit,
-  FaSave
-)
 
 const app = createApp(App)
 
@@ -38,5 +17,4 @@ app.use(ToastPlugin, {
   duration: 3000
 })
 
-app.component('v-icon', OhVueIcon)
 app.mount('#app')
