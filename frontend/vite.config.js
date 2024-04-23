@@ -10,6 +10,10 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // Set the limit to 5 MB
+        // Other Workbox options...
+      },
       registerType: 'autoUpdate',
       manifest: {
         name: 'My Awesome App',
