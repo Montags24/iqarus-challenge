@@ -12,16 +12,11 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue-toast-notification": "^3.1.2",
-    "vue3-google-map": "^0.20.0",
-    "webpack": "^5.91.0",
-    "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-visualizer-plugin": "^0.1.11"
+    "vue3-google-map": "^0.20.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

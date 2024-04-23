@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SendUpdate from '@/views/SendUpdate.vue'
-const MapView = import('@/views/MapView.vue')
-const UserProfile = import('@/views/UserProfile.vue')
-const RegisterView = import('@/views/RegisterView.vue')
+import MapView from '@/views/MapView.vue'
+import UserProfile from '@/views/UserProfile.vue'
+import RegisterView from '@/views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

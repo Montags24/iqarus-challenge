@@ -75,7 +75,4 @@ export default defineConfig({
     sourcemap: 'inline',
     emptyOutDir: true
   }
-  // optimizeDeps: {
-  //   exclude: ['oh-vue-icons/icons']
-  // }
 })
