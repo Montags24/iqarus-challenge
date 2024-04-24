@@ -15,7 +15,7 @@ const user = reactive(new User(domainOrigin))
 </script>
 
 <template>
-  <div class="bg-black min-h-screen">
+  <div class="bg-black min-h-[calc(100vh-118px)]">
     <!-- Header -->
     <header class="relative z-10">
       <MobileHeader :onLine="onLine" :user="user"></MobileHeader>
@@ -75,6 +75,7 @@ export default {
   beforeUnmount() {
     window.removeEventListener("online", this.handleOnlineStatus);
     window.removeEventListener("offline", this.handleOnlineStatus);
-  }
+  },
+
 };
 </script>
