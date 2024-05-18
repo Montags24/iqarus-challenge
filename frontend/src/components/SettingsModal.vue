@@ -18,12 +18,40 @@
                 </div>
 
                 <!-- Modal Content -->
-                <div class="mt-6 space-y-4">
-                    <h1>Show own location</h1>
-                    <h1>Select categories to show</h1>
-                    <h1>Set timeframe</h1>
+                <div class="mt-6 space-y-4 flex flex-col">
+                    <div class="flex items-center">
+                        <input v-model="ownLocation" id="checkbox-own-location" type="checkbox"
+                            name="checkbox-own-location" class="w-4 h-4 rounded accent-orange-500">
+                        <label for="checkbox-own-location"
+                            class="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Show own location
+                            on map</label>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1>Categories</h1>
+                        <div class="flex flex-col flex-wrap max-h-20">
+                            <div v-for="(category, index) in categories" :key="index" class="flex">
+                                <input v-model="formOptions[index]" :id="category" type="checkbox" :name="category"
+                                    class="w-4 h-4 rounded accent-orange-500">
+                                <label :for="category"
+                                    class="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
+                                        category }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1>Set timeframe</h1>
+                        <div class="flex space-x-4 items-center text-sm">
+                            <div class="max-w-sm text-black">
+                                <input type="date" id="from-date" name="from-date" class="rounded-sm  text-center">
+                            </div>
+                            <span>to</span>
+                            <div class="max-w-sm text-black text-sm">
+                                <input type="date" id="to-date" name="to-date" class="rounded-sm text-center">
+                            </div>
+                        </div>
+                    </div>
                     <h1>Set search radius</h1>
-                    <h1>Sumbit Button</h1>
+                    <h1>Save Button</h1>
                 </div>
             </div>
         </div>
@@ -44,6 +72,18 @@ export default {
     },
     data() {
         return {
+            categories:
+                ["Infrastructure", "Medical", "Security", "Logistics", "Environment", "Health", "Communications"],
+            ownLocation: false,
+            formOptions: [
+                { infrastructure: false },
+                { medical: false },
+                { security: false },
+                { logistics: false },
+                { environment: false },
+                { health: false },
+                { communications: false },
+            ]
         };
     },
     methods: {

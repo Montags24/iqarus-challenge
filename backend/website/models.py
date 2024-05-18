@@ -1,7 +1,6 @@
 import os
 
 from cryptography.fernet import Fernet
-from datetime import datetime
 from dotenv import load_dotenv
 from website import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
@@ -94,4 +93,102 @@ class SecurityForm(db.Model):
             incidentsReported=self.incidentsReported,
             riskToRelief=self.riskToRelief,
             incidentsComments=self.incidentsComments,
+        )
+
+
+class InfrastructureForm(db.Model):
+    __tablename__ = "infrastructure_form"
+    id = Column(Integer, primary_key=True)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Maps to the user table
+    user_id = Column(
+        Integer,
+        ForeignKey(
+            "users.id",
+            name=f"fk_{__tablename__}_users",
+            ondelete="CASCADE",
+        ),
+    )
+    roadCondition = Column(String(50))
+    roadDamage = Column(String(50))
+    roadAccess = Column(String(50))
+    roadComments = Column(String(250))
+    buildingIntegrity = Column(String(50))
+    buildingType = Column(String(50))
+    buildingDamage = Column(String(50))
+    buildingComments = Column(String(250))
+    utilityPower = Column(String(50))
+    utilityWater = Column(String(50))
+    utilityComms = Column(String(50))
+    utilityComments = Column(String(250))
+
+    def get_dict(self):
+        return dict(
+            id=self.id,
+            longitude=self.longitude,
+            latitude=self.latitude,
+            timestamp=self.timestamp,
+            user_id=self.user_id,
+            roadCondition=self.roadCondition,
+            roadDamage=self.roadDamage,
+            roadAccess=self.roadAccess,
+            roadComments=self.roadComments,
+            buildingIntegrity=self.buildingIntegrity,
+            buildingType=self.buildingType,
+            buildingDamage=self.buildingDamage,
+            buildingComments=self.buildingComments,
+            utilityPower=self.utilityPower,
+            utilityWater=self.utilityWater,
+            utilityComms=self.utilityComms,
+            utilityComments=self.utilityComments,
+        )
+
+
+class CommunicationsForm(db.Model):
+    __tablename__ = "communications_form"
+    id = Column(Integer, primary_key=True)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Maps to the user table
+    user_id = Column(
+        Integer,
+        ForeignKey(
+            "users.id",
+            name=f"fk_{__tablename__}_users",
+            ondelete="CASCADE",
+        ),
+    )
+    commsInfrastructure = Column(String(50))
+    commsPhoneAndInternet = Column(String(50))
+    commsAvailability = Column(String(50))
+    commsAlternative = Column(String(50))
+    commsComments = Column(String(250))
+    connectElectricity = Column(String(50))
+    connectFuelAvailability = Column(String(50))
+    connectBackupPower = Column(String(50))
+    connectLocalControl = Column(String(250))
+    connectComments = Column(String(250))
+
+    def get_dict(self):
+        return dict(
+            id=self.id,
+            longitude=self.longitude,
+            latitude=self.latitude,
+            timestamp=self.timestamp,
+            user_id=self.user_id,
+            commsInfrastructure=self.commsInfrastructure,
+            commsPhoneAndInternet=self.commsPhoneAndInternet,
+            commsAvailability=self.commsAvailability,
+            commsAlternative=self.commsAlternative,
+            commsComments=self.commsComments,
+            connectElectricity=self.connectElectricity,
+            connectFuelAvailability=self.connectFuelAvailability,
+            connectBackupPower=self.connectBackupPower,
+            connectLocalControl=self.connectLocalControl,
+            connectComments=self.connectComments,
         )
