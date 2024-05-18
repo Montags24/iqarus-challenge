@@ -1,7 +1,7 @@
 import pytest
 import os
 import secrets
-import datetime
+from datetime import datetime, timedelta, timezone
 import random
 from dotenv import load_dotenv
 from website import create_app, db
@@ -45,9 +45,7 @@ def test_get_form_data_for_maps(client, headers):
     longitude = random.randint(-180, 180)
 
     payload = {
-        "timestamp": convert_date_to_ms(
-            datetime.datetime.now(tz=datetime.timezone.utc)
-        ),
+        "timestamp": convert_date_to_ms(datetime.now(tz=timezone.utc)),
         "latitude": latitude,
         "longitude": longitude,
         "armedGroupsPresence": f"{token}_armedGroupsPresence",
@@ -67,17 +65,16 @@ def test_get_form_data_for_maps(client, headers):
 
     route = "api/maps/"
 
-    now = datetime.datetime.now(tz=datetime.timezone.utc)
-
-    one_week_ago = now - datetime.timedelta(weeks=1)
+    now = datetime.now().date()
+    one_week_ago = now - timedelta(weeks=1)
 
     payload = {
         "categories": ["security"],
-        "date_from": convert_date_to_ms(one_week_ago),
-        "date_to": convert_date_to_ms(now),
-        "search_latitude": latitude,
-        "search_longitude": longitude,
-        "search_radius_km": 5,
+        "dateFrom": one_week_ago.strftime("%Y-%m-%d"),
+        "dateTo": now.strftime("%Y-%m-%d"),
+        "searchLatitude": latitude,
+        "searchLongitude": longitude,
+        "searchRadiusKm": 5,
     }
 
     response = client.post(route, headers=headers["user"], json=payload)

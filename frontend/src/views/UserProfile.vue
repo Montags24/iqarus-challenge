@@ -77,6 +77,9 @@ export default {
         user: {
             type: Object,
         },
+        maps: {
+            type: Object,
+        },
         onLine: {
             type: Boolean
         }

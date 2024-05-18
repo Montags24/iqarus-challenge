@@ -3,6 +3,7 @@ import { RouterView } from 'vue-router'
 import { reactive } from 'vue';
 
 import User from './stores/User';
+import Maps from './stores/Maps';
 
 // when we are developing using localhost on port 5173 (vue's default port),
 // to integrate with the flask backend, we need to modify the port to 5000 (flask default port)
@@ -12,6 +13,7 @@ if (domainOrigin.slice(-5) == ":5173") {
 }
 
 const user = reactive(new User(domainOrigin))
+const maps = reactive(new Maps(domainOrigin, user))
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const user = reactive(new User(domainOrigin))
 
     <!-- Content -->
     <main class="relative z-0">
-      <RouterView :onLine="onLine" :user="user" />
+      <RouterView :onLine="onLine" :user="user" :maps="maps" />
     </main>
 
     <!-- Footer -->

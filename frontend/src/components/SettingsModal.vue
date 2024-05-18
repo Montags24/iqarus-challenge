@@ -30,8 +30,8 @@
                         <h1>Categories</h1>
                         <div class="flex flex-col flex-wrap max-h-20">
                             <div v-for="(category, index) in categories" :key="index" class="flex">
-                                <input v-model="formOptions[index]" :id="category" type="checkbox" :name="category"
-                                    class="w-4 h-4 rounded accent-orange-500">
+                                <input v-model="selectedCategories[category]" :id="category" type="checkbox"
+                                    :name="category" class="w-4 h-4 rounded accent-orange-500">
                                 <label :for="category"
                                     class="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
                                         category }}</label>
@@ -42,16 +42,26 @@
                         <h1>Set timeframe</h1>
                         <div class="flex space-x-4 items-center text-sm">
                             <div class="max-w-sm text-black">
-                                <input type="date" id="from-date" name="from-date" class="rounded-sm  text-center">
+                                <input type="date" id="from-date" name="from-date" class="rounded-sm  text-center"
+                                    v-model="dateFrom">
                             </div>
                             <span>to</span>
                             <div class="max-w-sm text-black text-sm">
-                                <input type="date" id="to-date" name="to-date" class="rounded-sm text-center">
+                                <input type="date" id="to-date" name="to-date" class="rounded-sm text-center"
+                                    v-model="dateTo">
                             </div>
                         </div>
                     </div>
-                    <h1>Set search radius</h1>
-                    <h1>Save Button</h1>
+                    <div>
+                        <label for="default-range" class="">Search Radius</label> <span>- {{ searchRadiusKm }}km</span>
+                        <input id="default-range" type="range" min="0" max="50" value="25" v-model="searchRadiusKm"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                    </div>
+                    <div class="flex justify-center">
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-1 px-6 rounded"
+                            @click="saveSettings">Save
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,7 +70,7 @@
 
 <script>
 export default {
-    emits: ['toggleModalVisibility'],
+    emits: ['toggleModalVisibility', 'saveSettings'],
     props: {
         visible: {
             type: Boolean,
@@ -75,21 +85,25 @@ export default {
             categories:
                 ["Infrastructure", "Medical", "Security", "Logistics", "Environment", "Health", "Communications"],
             ownLocation: false,
-            formOptions: [
-                { infrastructure: false },
-                { medical: false },
-                { security: false },
-                { logistics: false },
-                { environment: false },
-                { health: false },
-                { communications: false },
-            ]
+            selectedCategories: {},
+            dateFrom: '',
+            dateTo: '',
+            searchRadiusKm: 25,
         };
     },
     methods: {
         toggleModal() {
             this.$emit('toggleModalVisibility')
         },
+        saveSettings() {
+            const data = {}
+            data["ownLocation"] = this.ownLocation
+            data["categories"] = this.selectedCategories
+            data["dateFrom"] = this.dateFrom
+            data["dateTo"] = this.dateTo
+            data["searchRadiusKm"] = parseInt(this.searchRadiusKm)
+            this.$emit('saveSettings', data)
+        }
     },
 };
 </script>

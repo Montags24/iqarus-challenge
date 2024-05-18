@@ -6,7 +6,8 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
 <template>
     <div v-if="settingsModalVisibility" class="fixed inset-0 bg-black opacity-50 z-20"></div>
     <section v-if="onLine" class="mt-11 pt-3 relative">
-        <SettingsModal :visible="settingsModalVisibility" @toggleModalVisibility="toggleSettingsModalVisibility">
+        <SettingsModal :visible="settingsModalVisibility" @toggleModalVisibility="toggleSettingsModalVisibility"
+            @saveSettings="saveSettings">
         </SettingsModal>
 
         <div class="absolute top-6 right-32 z-10">
@@ -38,6 +39,11 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
                 </svg>
             </button>
         </div>
+        <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center">
+            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
+                @click="searchArea">Search area
+            </button>
+        </div>
         <GoogleMap class="h-[calc(100vh-128px)]" :api-key="googleMapsApiKey" style="width: 100%" :center="mapCenter"
             :zoom="mapZoom" :fullscreenControl="false" @click="handleMapClick">
             <div v-if="ownLocationRequested">
@@ -56,6 +62,26 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
                         </svg>
                     </div>
                 </CustomMarker>
+            </div>
+            <div v-if="queryResults.length > 0">
+                <div v-for="(data, index) in queryResults" :key="index">
+                    <CustomMarker
+                        :options="{ position: { lat: data.latitude, lng: data.longitude }, anchorPoint: 'BOTTOM_CENTER' }">
+                        <div style="text-align: center" class="hover:cursor-pointer">
+                            <svg class="h-8 w-8 fill-current text-red-500" version="1.0" id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M32,0C18.746,0,8,10.746,8,24c0,5.219,1.711,10.008,4.555,13.93c0.051,0.094,0.059,0.199,0.117,0.289l16,24 C29.414,63.332,30.664,64,32,64s2.586-0.668,3.328-1.781l16-24c0.059-0.09,0.066-0.195,0.117-0.289C54.289,34.008,56,29.219,56,24 C56,10.746,45.254,0,32,0z M32,32c-4.418,0-8-3.582-8-8s3.582-8,8-8s8,3.582,8,8S36.418,32,32,32z">
+                                    </path>
+                                </g>
+                            </svg>
+                        </div>
+                    </CustomMarker>
+                </div>
             </div>
             <div v-if="selectedLocation">
                 <CustomMarker :options="selectedLocationMarkerOptions">
@@ -76,6 +102,9 @@ export default {
         user: {
             type: Object,
         },
+        maps: {
+            type: Object,
+        },
         onLine: {
             type: Boolean,
         },
@@ -88,24 +117,25 @@ export default {
             googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
             mapZoom: 2,
             mapCenter: { lat: 33, lng: 44 },
-            latitude: '',
-            longitude: '',
+            userSelectedLat: '',
+            userSelectedLong: '',
             userPosition: {},
             markerOptions: {},
             ownLocationRequested: false,
             selectedLocationMarkerOptions: {},
             selectedLocationCenter: { lat: 0, lng: 0 },
             selectedLocation: false,
-            settingsModalVisibility: false
+            settingsModalVisibility: false,
+            // payload contains settings from modal
+            payload: '',
+            queryResults: []
         }
     },
     methods: {
         async getMyLocation() {
             try {
                 const userPosition = await checkLocationPermission();
-                this.latitude = userPosition.coords.latitude
-                this.longitude = userPosition.coords.longitude
-                this.userPosition = { lat: this.latitude, lng: this.longitude }
+                this.userPosition = { lat: userPosition.coords.latitude, lng: userPosition.coords.longitude }
                 this.markerOptions = { position: this.userPosition }
                 this.mapCenter = this.userPosition
                 this.mapZoom = 12
@@ -125,9 +155,48 @@ export default {
             this.selectedLocation = true
             this.selectedLocationMarkerOptions = { position: this.selectedLocationCenter }
             this.mapCenter = this.selectedLocationCenter
+            this.userSelectedLat = lat
+            this.userSelectedLong = lng
         },
         toggleSettingsModalVisibility() {
             this.settingsModalVisibility = !this.settingsModalVisibility
+        },
+        saveSettings(payload) {
+            this.payload = payload
+
+            if (payload.ownLocation) {
+                this.getMyLocation()
+            } else {
+                this.ownLocationRequested = false
+            }
+            this.toggleSettingsModalVisibility()
+        },
+        async searchArea() {
+            if (this.payload == '') {
+                this.$toast.error("Please update map settings first")
+            } else if (this.userSelectedLat == '' || this.userSelectedLong == '') {
+                this.$toast.error("Please click on the map to set search location")
+            } else if (this.payload.dateTo == '' || this.payload.dateFrom == '') {
+                this.$toast.error("Please select a date range")
+            }
+            else {
+                try {
+                    this.queryResults = ''
+                    this.payload["latitude"] = this.userSelectedLat
+                    this.payload["longitude"] = this.userSelectedLong
+                    const results = await this.maps.apiGetMapsSearchRequest(this.payload)
+                    this.queryResults = results
+                    this.$toast.success('Results successful')
+                } catch (error) {
+                    console.log(error.status)
+                    if (error.status === 409) {
+                        // enter error codes
+                    } else {
+                        // Handle other errors
+                        console.log("Other error:", error);
+                    }
+                }
+            }
         }
     },
 

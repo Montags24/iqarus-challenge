@@ -1,11 +1,9 @@
+from datetime import datetime, timedelta
 from flask import request, jsonify
-from sqlalchemy import inspect
-from sqlalchemy.sql import func
 from website import db
 from website.api_maps import bp
 from website.models import SecurityForm, CommunicationsForm, InfrastructureForm
 from website.api_users.utilities import validate_user
-from website.api_forms.utilities import convert_ms_to_datetime
 
 
 # def haversine(lat1, lon1, lat2, lon2):
@@ -34,15 +32,33 @@ def get_form_data_for_maps(**kwargs):
 
     try:
         categories = api_package["categories"]
-        date_from = convert_ms_to_datetime(api_package["date_from"])
-        date_to = convert_ms_to_datetime(api_package["date_to"])
-        search_latitude = api_package["search_latitude"]
-        search_longitude = api_package["search_longitude"]
-        search_radius_km = api_package["search_radius_km"]
+        date_from = datetime.strptime(api_package["dateFrom"], "%Y-%m-%d")
+        # We add a day here as the query doesn't pick up same day even though using <=
+        date_to = datetime.strptime(api_package["dateTo"], "%Y-%m-%d") + timedelta(
+            days=1
+        )
+        search_latitude = api_package["searchLatitude"]
+        search_longitude = api_package["searchLongitude"]
+        search_radius_km = api_package["searchRadiusKm"]
     except KeyError:
         return jsonify(message="Bad API request - please try again"), 400
     except Exception:
         return jsonify(message="An error occurred"), 500
+
+    if len(categories) == 0:
+        return jsonify(message="No categories selected"), 204
+
+    if search_latitude is None or search_longitude is None:
+        return (
+            jsonify(message="A location must be selected to initiate the search"),
+            204,
+        )
+
+    if search_radius_km is None:
+        return (
+            jsonify(message="A search radius must be supplied"),
+            204,
+        )
 
     category_mapping = {
         "security": SecurityForm,
@@ -53,6 +69,8 @@ def get_form_data_for_maps(**kwargs):
 
     results = []
 
+    # Really inefficient way to search for locations within radius, but for now it'll do.
+    # In the future look into postGIS
     for form in forms_to_search:
         form_entries_in_date = (
             db.session.query(form)
