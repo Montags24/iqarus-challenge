@@ -50,6 +50,10 @@ def create_app():
 
         app.register_blueprint(forms_bp, url_prefix="/api/forms")
 
+        from website.api_maps import bp as maps_bp
+
+        app.register_blueprint(maps_bp, url_prefix="/api/maps")
+
         from website.frontend import bp as frontend_bp
 
         app.register_blueprint(frontend_bp, url_prefix="/")
