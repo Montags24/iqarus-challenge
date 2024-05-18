@@ -63,7 +63,7 @@
                                 </g>
                             </g>
                         </svg>
-                        <p class="pt-1">Profile</p>
+                        <p class="pt-1">{{ user.loggedIn ? 'Profile' : 'Login' }}</p>
                     </div>
                 </RouterLink>
             </div>
@@ -75,6 +75,11 @@
 <script>
 import { formSVG } from '../assets/svg/index'
 export default {
+    props: {
+        user: {
+            type: Object,
+        },
+    },
     data() {
         return {
             formSVG: formSVG

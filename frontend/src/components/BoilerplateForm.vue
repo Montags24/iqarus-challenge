@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-wrap gap-x-6">
-        <section v-for="(section, index) in formObj" :key="index" class="pb-4 px-4 w-full">
+        <section v-for="(section, index) in formObj.sections" :key="index" class="pb-4 px-4 w-full">
             <div class="rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
                 <label class="block uppercase text-white text-md font-bold">
                     {{ section.title }}
@@ -36,7 +36,7 @@
     </div>
     <section class="pb-10 flex justify-center">
         <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
-            @click="submitForm">Submit <v-icon name="io-send" /></button>
+            @click="submitForm">Submit </button>
     </section>
 </template>
 
@@ -51,12 +51,13 @@ export default {
     data() {
         return {
             payload: {
-                formName: this.formObj.formName,
+
             }
         };
     },
     methods: {
         submitForm() {
+            this.payload.formName = this.formObj.category
             this.$emit('submitForm', this.payload)
         }
     }
