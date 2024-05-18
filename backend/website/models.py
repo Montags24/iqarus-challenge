@@ -2,6 +2,7 @@ import os
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
+from math import radians, sin, cos, sqrt, atan2
 from website import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.sql import func
@@ -82,6 +83,7 @@ class SecurityForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="security",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
@@ -94,6 +96,28 @@ class SecurityForm(db.Model):
             riskToRelief=self.riskToRelief,
             incidentsComments=self.incidentsComments,
         )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        R = 6371  # Earth's radius in kilometers
+
+        dlat = radians(lat - self.latitude)
+        dlng = radians(lng - self.longitude)
+
+        a = (
+            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
+            * cos(radians(lat).real)
+            * sin(dlng / 2)
+            * sin(dlng / 2)
+        )
+
+        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
+
+        d = R * c
+
+        return d
 
 
 class InfrastructureForm(db.Model):
@@ -128,6 +152,7 @@ class InfrastructureForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="infrastructure",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
@@ -145,6 +170,28 @@ class InfrastructureForm(db.Model):
             utilityComms=self.utilityComms,
             utilityComments=self.utilityComments,
         )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        R = 6371  # Earth's radius in kilometers
+
+        dlat = radians(lat - self.latitude)
+        dlng = radians(lng - self.longitude)
+
+        a = (
+            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
+            * cos(radians(lat).real)
+            * sin(dlng / 2)
+            * sin(dlng / 2)
+        )
+
+        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
+
+        d = R * c
+
+        return d
 
 
 class CommunicationsForm(db.Model):
@@ -177,6 +224,7 @@ class CommunicationsForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="communications",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
@@ -192,3 +240,25 @@ class CommunicationsForm(db.Model):
             connectLocalControl=self.connectLocalControl,
             connectComments=self.connectComments,
         )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        R = 6371  # Earth's radius in kilometers
+
+        dlat = radians(lat - self.latitude)
+        dlng = radians(lng - self.longitude)
+
+        a = (
+            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
+            * cos(radians(lat).real)
+            * sin(dlng / 2)
+            * sin(dlng / 2)
+        )
+
+        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
+
+        d = R * c
+
+        return d
