@@ -3,13 +3,14 @@ from flask import request, jsonify
 from website import db
 from website.api_maps import bp
 from website.models import SecurityForm, CommunicationsForm, InfrastructureForm
-from website.utils import calculate_longitude_degrees_for_km
-from website.api_users.utilities import validate_user
+from website.utils import (
+    calculate_longitude_degrees_for_km,
+    calculate_km_to_latitude_degrees,
+)
 
 
 @bp.route("/", methods=["POST"])
-@validate_user
-def get_form_data_for_maps(**kwargs):
+def get_form_data_for_maps():
     try:
         api_package = request.get_json()
     except Exception:
@@ -61,10 +62,9 @@ def get_form_data_for_maps(**kwargs):
     # For longitude,
     for form in forms_to_search:
 
-        bounding_box_km = 50
-        latitude_degree_range = 0.45
+        latitude_degree_range = calculate_km_to_latitude_degrees(search_radius_km * 2)
         longitude_degree_range = calculate_longitude_degrees_for_km(
-            bounding_box_km, latitude_degree_range
+            search_radius_km * 2, search_latitude
         )
         lower_bound_latitude = search_latitude - (latitude_degree_range / 2)
         upper_bound_latitude = search_latitude + (latitude_degree_range / 2)

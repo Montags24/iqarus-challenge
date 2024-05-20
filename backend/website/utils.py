@@ -38,3 +38,19 @@ def calculate_longitude_degrees_for_km(distance_km, latitude_deg):
     # Convert the distance from kilometers to degrees of longitude
     degrees_longitude = distance_km / km_per_degree_longitude
     return degrees_longitude
+
+
+def calculate_km_to_latitude_degrees(km):
+    """
+    Convert a distance in kilometers to degrees of latitude.
+
+    Parameters:
+    km (float): Distance in kilometers.
+
+    Returns:
+    float: Distance in degrees of latitude.
+    """
+    # One degree of latitude is approximately 111 kilometers
+    km_per_degree = 111.0
+    degrees = km / km_per_degree
+    return degrees

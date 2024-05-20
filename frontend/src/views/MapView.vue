@@ -1,5 +1,5 @@
 <script setup>
-import { GoogleMap, CustomMarker } from 'vue3-google-map'
+import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
 
 </script>
 
@@ -46,6 +46,7 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
         </div>
         <GoogleMap class="h-[calc(100vh-128px)]" :api-key="googleMapsApiKey" style="width: 100%" :center="mapCenter"
             :zoom="mapZoom" :fullscreenControl="false" @click="handleMapClick">
+            <Circle :options="circleOptions" />
             <div v-if="ownLocationRequested">
                 <CustomMarker :options="markerOptions">
                     <div style="text-align: center" class="hover:cursor-pointer">
@@ -66,21 +67,23 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
             <div v-if="queryResults.length > 0">
                 <div v-for="(data, index) in queryResults" :key="index">
                     <CustomMarker
-                        :options="{ position: { lat: data.latitude, lng: data.longitude }, anchorPoint: 'BOTTOM_CENTER' }">
+                        :options="{ position: { lat: data.latitude, lng: data.longitude }, anchorPoint: 'BOTTOM_CENTER' }"
+                        @click="infoWindow[index] = true">
                         <div style="text-align: center" class="hover:cursor-pointer">
-                            <svg class="h-8 w-8 fill-current text-red-500" version="1.0" id="Layer_1"
-                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path
-                                        d="M32,0C18.746,0,8,10.746,8,24c0,5.219,1.711,10.008,4.555,13.93c0.051,0.094,0.059,0.199,0.117,0.289l16,24 C29.414,63.332,30.664,64,32,64s2.586-0.668,3.328-1.781l16-24c0.059-0.09,0.066-0.195,0.117-0.289C54.289,34.008,56,29.219,56,24 C56,10.746,45.254,0,32,0z M32,32c-4.418,0-8-3.582-8-8s3.582-8,8-8s8,3.582,8,8S36.418,32,32,32z">
-                                    </path>
-                                </g>
-                            </svg>
+                            <img :src="return_svg(data.category)" class="h-10 w-10" alt="">
                         </div>
+
                     </CustomMarker>
+                    <InfoWindow :options="{ position: { lat: data.latitude, lng: data.longitude } }"
+                        v-model="infoWindow[index]">
+                        <template #default>
+                            <div>
+                                <div v-for="(value, index) in Object.entries(data.form_data)" :key="index">
+                                    {{ value[0] }}: {{ value[1] ? value[1] : 'N/A' }}
+                                </div>
+                            </div>
+                        </template>
+                    </InfoWindow>
                 </div>
             </div>
             <div v-if="selectedLocation">
@@ -97,6 +100,7 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
 <script>
 import { checkLocationPermission } from '@/stores/geoLocation';
 import SettingsModal from '../components/SettingsModal.vue'
+import { infrastructureSVG, communicationsSVG, securitySVG } from '@/assets/svg';
 export default {
     props: {
         user: {
@@ -128,10 +132,26 @@ export default {
             settingsModalVisibility: false,
             // payload contains settings from modal
             payload: '',
-            queryResults: []
+            queryResults: [],
+            infrastructureSVG: infrastructureSVG,
+            securitySVG: securitySVG,
+            communicationsSVG: communicationsSVG,
+            circleOptions: {
+                center: { lat: 0, lng: 0 },
+                radius: 25000,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.4,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.15,
+            },
+            infoWindow: {},
         }
     },
     methods: {
+        clickIcon() {
+            this.$toast.success("hello")
+        },
         async getMyLocation() {
             try {
                 const userPosition = await checkLocationPermission();
@@ -150,6 +170,11 @@ export default {
             const clickedLatLng = event.latLng;
             const lat = clickedLatLng.lat();
             const lng = clickedLatLng.lng();
+            this.circleOptions = {
+                ...this.circleOptions,
+                center: { lat: lat, lng: lng }
+            };
+
 
             this.selectedLocationCenter = { lat: lat, lng: lng }
             this.selectedLocation = true
@@ -164,12 +189,29 @@ export default {
         saveSettings(payload) {
             this.payload = payload
 
+            this.circleOptions = {
+                ...this.circleOptions,
+                radius: payload.searchRadiusKm * 1000
+            };
+
             if (payload.ownLocation) {
                 this.getMyLocation()
             } else {
                 this.ownLocationRequested = false
             }
             this.toggleSettingsModalVisibility()
+        },
+        return_svg(category) {
+            switch (category) {
+                case "security":
+                    return securitySVG
+                case "communications":
+                    return communicationsSVG
+                case "infrastructure":
+                    return infrastructureSVG
+                default:
+                //
+            }
         },
         async searchArea() {
             if (this.payload == '') {
@@ -185,6 +227,7 @@ export default {
                     this.payload["latitude"] = this.userSelectedLat
                     this.payload["longitude"] = this.userSelectedLong
                     const results = await this.maps.apiGetMapsSearchRequest(this.payload)
+                    console.log(results)
                     this.queryResults = results
                     this.$toast.success('Results successful')
                 } catch (error) {

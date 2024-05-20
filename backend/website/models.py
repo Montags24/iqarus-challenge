@@ -88,15 +88,15 @@ class SecurityForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            form_data=[
-                {"armedGroupsPresence": self.armedGroupsPresence},
-                {"reportOfViolence": self.reportOfViolence},
-                {"localEnforcementPresence": self.localEnforcementPresence},
-                {"securityRiskComments": self.securityRiskComments},
-                {"incidentsReported": self.incidentsReported},
-                {"riskToRelief": self.riskToRelief},
-                {"incidentsComments": self.incidentsComments},
-            ],
+            form_data={
+                "armedGroupsPresence": self.armedGroupsPresence,
+                "reportOfViolence": self.reportOfViolence,
+                "localEnforcementPresence": self.localEnforcementPresence,
+                "securityRiskComments": self.securityRiskComments,
+                "incidentsReported": self.incidentsReported,
+                "riskToRelief": self.riskToRelief,
+                "incidentsComments": self.incidentsComments,
+            },
         )
 
     def distance_to(self, lat, lng):
@@ -148,20 +148,20 @@ class InfrastructureForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            form_data=[
-                {"roadCondition": self.roadCondition},
-                {"roadDamage": self.roadDamage},
-                {"roadAccess": self.roadAccess},
-                {"roadComments": self.roadComments},
-                {"buildingIntegrity": self.buildingIntegrity},
-                {"buildingType": self.buildingType},
-                {"buildingDamage": self.buildingDamage},
-                {"buildingComments": self.buildingComments},
-                {"utilityPower": self.utilityPower},
-                {"utilityWater": self.utilityWater},
-                {"utilityComms": self.utilityComms},
-                {"utilityComments": self.utilityComments},
-            ],
+            form_data={
+                "roadCondition": self.roadCondition,
+                "roadDamage": self.roadDamage,
+                "roadAccess": self.roadAccess,
+                "roadComments": self.roadComments,
+                "buildingIntegrity": self.buildingIntegrity,
+                "buildingType": self.buildingType,
+                "buildingDamage": self.buildingDamage,
+                "buildingComments": self.buildingComments,
+                "utilityPower": self.utilityPower,
+                "utilityWater": self.utilityWater,
+                "utilityComms": self.utilityComms,
+                "utilityComments": self.utilityComments,
+            },
         )
 
     def distance_to(self, lat, lng):
@@ -211,18 +211,18 @@ class CommunicationsForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            form_data=[
-                {"commsInfrastructure": self.commsInfrastructure},
-                {"commsPhoneAndInternet": self.commsPhoneAndInternet},
-                {"commsAvailability": self.commsAvailability},
-                {"commsAlternative": self.commsAlternative},
-                {"commsComments": self.commsComments},
-                {"connectElectricity": self.connectElectricity},
-                {"connectFuelAvailability": self.connectFuelAvailability},
-                {"connectBackupPower": self.connectBackupPower},
-                {"connectLocalControl": self.connectLocalControl},
-                {"connectComments": self.connectComments},
-            ],
+            form_data={
+                "commsInfrastructure": self.commsInfrastructure,
+                "commsPhoneAndInternet": self.commsPhoneAndInternet,
+                "commsAvailability": self.commsAvailability,
+                "commsAlternative": self.commsAlternative,
+                "commsComments": self.commsComments,
+                "connectElectricity": self.connectElectricity,
+                "connectFuelAvailability": self.connectFuelAvailability,
+                "connectBackupPower": self.connectBackupPower,
+                "connectLocalControl": self.connectLocalControl,
+                "connectComments": self.connectComments,
+            },
         )
 
     def distance_to(self, lat, lng):
