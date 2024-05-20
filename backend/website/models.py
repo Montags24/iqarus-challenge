@@ -2,7 +2,7 @@ import os
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
-from math import radians, sin, cos, sqrt, atan2
+from website.utils import calculate_haversine
 from website import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.sql import func
@@ -103,23 +103,12 @@ class SecurityForm(db.Model):
         """
         Returns the great-circle distance in kilometers between the instance and a point.
         """
-        R = 6371  # Earth's radius in kilometers
-
-        dlat = radians(lat - self.latitude)
-        dlng = radians(lng - self.longitude)
-
-        a = (
-            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
-            * cos(radians(lat).real)
-            * sin(dlng / 2)
-            * sin(dlng / 2)
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )
-
-        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
-
-        d = R * c
-
-        return d
 
 
 class InfrastructureForm(db.Model):
@@ -179,23 +168,12 @@ class InfrastructureForm(db.Model):
         """
         Returns the great-circle distance in kilometers between the instance and a point.
         """
-        R = 6371  # Earth's radius in kilometers
-
-        dlat = radians(lat - self.latitude)
-        dlng = radians(lng - self.longitude)
-
-        a = (
-            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
-            * cos(radians(lat).real)
-            * sin(dlng / 2)
-            * sin(dlng / 2)
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )
-
-        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
-
-        d = R * c
-
-        return d
 
 
 class CommunicationsForm(db.Model):
@@ -251,20 +229,9 @@ class CommunicationsForm(db.Model):
         """
         Returns the great-circle distance in kilometers between the instance and a point.
         """
-        R = 6371  # Earth's radius in kilometers
-
-        dlat = radians(lat - self.latitude)
-        dlng = radians(lng - self.longitude)
-
-        a = (
-            (sin(dlat / 2) * sin(dlat / 2) + cos(radians(self.latitude))).real
-            * cos(radians(lat).real)
-            * sin(dlng / 2)
-            * sin(dlng / 2)
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )
-
-        c = 2 * atan2(sqrt(a), sqrt(1 - a)).real
-
-        d = R * c
-
-        return d

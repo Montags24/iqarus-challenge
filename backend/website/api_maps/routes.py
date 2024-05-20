@@ -3,23 +3,8 @@ from flask import request, jsonify
 from website import db
 from website.api_maps import bp
 from website.models import SecurityForm, CommunicationsForm, InfrastructureForm
+from website.utils import calculate_longitude_degrees_for_km
 from website.api_users.utilities import validate_user
-
-
-# def haversine(lat1, lon1, lat2, lon2):
-#     """
-#     Calculate the great circle distance in kilometers between two points
-#     on the earth (specified in decimal degrees).
-#     """
-#     lat1, lon1, lat2, lon2 = map(func.radians, [lat1, lon1, lat2, lon2])
-#     dlat = lat2 - lat1
-#     dlon = lon2 - lon1
-#     a = (
-#         func.sin(dlat / 2) ** 2
-#         + func.cos(lat1) * func.cos(lat2) * func.sin(dlon / 2) ** 2
-#     )
-#     c = 2 * func.atan2(func.sqrt(a), func.sqrt(1 - a))
-#     return 6371 * c  # Radius of Earth in kilometers
 
 
 @bp.route("/", methods=["POST"])
@@ -69,16 +54,39 @@ def get_form_data_for_maps(**kwargs):
 
     results = []
 
-    # Really inefficient way to search for locations within radius, but for now it'll do.
-    # In the future look into postGIS
+    # First specify a 50x50km box to search from (this is the max radius we set)
+    # Filter the results from that search
+    # For latitude, 1 degree is approx 111km
+    # 50km is approx 0.45 degrees of latitude
+    # For longitude,
     for form in forms_to_search:
-        form_entries_in_date = (
+
+        bounding_box_km = 50
+        latitude_degree_range = 0.45
+        longitude_degree_range = calculate_longitude_degrees_for_km(
+            bounding_box_km, latitude_degree_range
+        )
+        lower_bound_latitude = search_latitude - (latitude_degree_range / 2)
+        upper_bound_latitude = search_latitude + (latitude_degree_range / 2)
+
+        lower_bound_longitude = search_longitude - (longitude_degree_range / 2)
+        upper_bound_longitude = search_longitude + (longitude_degree_range / 2)
+
+        form_entries = (
             db.session.query(form)
             .filter(form.timestamp <= date_to, date_from <= form.timestamp)
+            .filter(
+                form.latitude <= upper_bound_latitude,
+                lower_bound_latitude <= form.latitude,
+            )
+            .filter(
+                form.longitude <= upper_bound_longitude,
+                lower_bound_longitude <= form.longitude,
+            )
             .all()
         )
 
-        for entry in form_entries_in_date:
+        for entry in form_entries:
             if entry.distance_to(search_latitude, search_longitude) < search_radius_km:
                 results.append(entry.get_dict())
 
