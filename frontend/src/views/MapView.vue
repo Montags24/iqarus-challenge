@@ -74,16 +74,20 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                         </div>
 
                     </CustomMarker>
-                    <InfoWindow :options="{ position: { lat: data.latitude, lng: data.longitude } }"
-                        v-model="infoWindow[index]">
-                        <template #default>
-                            <div>
-                                <div v-for="(value, index) in Object.entries(data.form_data)" :key="index">
-                                    {{ value[0] }}: {{ value[1] ? value[1] : 'N/A' }}
+                    <div v-if="infoWindow[index]">
+                        <InfoWindow :options="{ position: { lat: data.latitude, lng: data.longitude } }"
+                            v-model="infoWindow[index]">
+                            <template #default>
+                                <div>
+                                    <p>Username: {{ data.username }}</p>
+                                    <p>Timestamp: {{ data.timestamp }}</p>
+                                    <div v-for="(value, index) in Object.entries(data.form_data)" :key="index">
+                                        <p>{{ value[0] }}: {{ value[1] ? value[1] : 'N/A' }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                    </InfoWindow>
+                            </template>
+                        </InfoWindow>
+                    </div>
                 </div>
             </div>
             <div v-if="selectedLocation">
@@ -230,6 +234,11 @@ export default {
                     console.log(results)
                     this.queryResults = results
                     this.$toast.success('Results successful')
+                    // initialise info windows to false
+                    const len_query_results = this.queryResults.length
+                    for (let i = 0; i < len_query_results; i++) {
+                        this.infoWindow[i] = false
+                    }
                 } catch (error) {
                     console.log(error.status)
                     if (error.status === 409) {

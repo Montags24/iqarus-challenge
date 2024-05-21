@@ -39,6 +39,14 @@ class User(db.Model):
             timestamp=self.timestamp,
         )
 
+    @staticmethod
+    def get_username(user_id):
+        user = db.session.query(User).filter(User.id == user_id).first()
+        if user:
+            return user.username
+        else:
+            return "N/A"
+
 
 class Organisation(db.Model):
     __tablename__ = "organisations"
@@ -88,6 +96,7 @@ class SecurityForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
+            username=User.get_username(self.user_id),
             form_data={
                 "armedGroupsPresence": self.armedGroupsPresence,
                 "reportOfViolence": self.reportOfViolence,
@@ -148,6 +157,7 @@ class InfrastructureForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
+            username=User.get_username(self.user_id),
             form_data={
                 "roadCondition": self.roadCondition,
                 "roadDamage": self.roadDamage,
@@ -211,6 +221,7 @@ class CommunicationsForm(db.Model):
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
+            username=User.get_username(self.user_id),
             form_data={
                 "commsInfrastructure": self.commsInfrastructure,
                 "commsPhoneAndInternet": self.commsPhoneAndInternet,
