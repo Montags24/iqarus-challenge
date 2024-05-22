@@ -59,7 +59,10 @@ export default {
   methods: {
     async submitForm(payload) {
       if (navigator.onLine) {
-        console.log(payload);
+        if (!this.user.loggedIn) {
+          this.$router.push('/profile')
+          this.$toast.info('Please login to post update')
+        }
         try {
           const userPosition = await checkLocationPermission();
           payload.latitude = userPosition.coords.latitude
@@ -91,6 +94,7 @@ export default {
         const itemId = await addItem(newItem);
         this.items.push({ id: itemId, ...newItem });
         console.log("added item")
+        this.$toast.success('Form saved. Will attmpt to send when back online')
       } catch (error) {
         console.error(error);
         alert('Failed to add item');

@@ -4,6 +4,9 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
 </script>
 
 <template>
+    <div v-if="!onLine" class="mt-12 px-3 py-3 block uppercase text-white text-md font-bold bg-slate-400 text-center">
+        No accesss in offline mode
+    </div>
     <!-- Sets a dark overlay when modal is visible -->
     <div v-if="settingsModalVisibility" class="fixed inset-0 bg-black opacity-50 z-20"></div>
     <section v-if="onLine" class="mt-11 pt-3 relative">

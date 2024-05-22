@@ -6,7 +6,7 @@ import random
 from dotenv import load_dotenv
 from website import create_app, db
 from website.models import SecurityForm, User
-from website.tests.utilities import get_headers
+from website.tests.utilities import get_headers, convert_date_to_ms
 
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
@@ -30,10 +30,6 @@ def client():
 def headers(client):
     headers = get_headers(client)
     return headers
-
-
-def convert_date_to_ms(date):
-    return int(date.timestamp() * 1000)
 
 
 def test_get_form_data_for_maps(client, headers):

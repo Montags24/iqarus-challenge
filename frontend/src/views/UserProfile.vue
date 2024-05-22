@@ -1,4 +1,7 @@
 <template>
+    <div v-if="!onLine" class="mt-12 px-3 py-3 block uppercase text-white text-md font-bold bg-slate-400 text-center">
+        No accesss in offline mode
+    </div>
     <!-- START USER LOGIN AND REGISTER-->
     <section v-if="!user.loggedIn && onLine" class="mt-12 pt-6 ">
         <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">

@@ -33,3 +33,7 @@ def get_headers(client):
         user=user_headers,
         invalid=invalid_headers,
     )
+
+
+def convert_date_to_ms(date):
+    return int(date.timestamp() * 1000)

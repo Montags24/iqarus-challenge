@@ -38,7 +38,7 @@ def add_form(category: str, **kwargs):
         print(err)
         db.session.rollback()
         db.session.flush()  # for resetting non-commited .add()
-        return jsonify(message="An error occured creating a user"), 500
+        return jsonify(message="An error occured submitting a form"), 500
 
 
 def get_form_model(category: str) -> object:

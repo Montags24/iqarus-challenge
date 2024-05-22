@@ -73,11 +73,11 @@ export default {
   mounted() {
     window.addEventListener("online", this.handleOnlineStatus);
     window.addEventListener("offline", this.handleOnlineStatus);
+    this.$router.push('/profile')
   },
   beforeUnmount() {
     window.removeEventListener("online", this.handleOnlineStatus);
     window.removeEventListener("offline", this.handleOnlineStatus);
   },
-
 };
 </script>

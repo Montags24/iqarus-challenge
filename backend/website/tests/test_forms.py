@@ -1,11 +1,11 @@
 import pytest
 import os
 import secrets
-import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
-from website import create_app
-from website.models import SecurityForm, User
-from website.tests.utilities import get_headers
+from website import create_app, db
+from website.models import SecurityForm
+from website.tests.utilities import get_headers, convert_date_to_ms
 
 
 THIS_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
@@ -36,7 +36,7 @@ def test_add_form(client, headers):
     token = secrets.token_urlsafe(5)
 
     payload = {
-        "timestamp": datetime.datetime.now(tz=datetime.timezone.utc),
+        "timestamp": convert_date_to_ms(datetime.now(tz=timezone.utc)),
         "latitude": 40.0,
         "longitude": 40.0,
         "armedGroupsPresence": f"{token}_armedGroupsPresence",
@@ -50,4 +50,15 @@ def test_add_form(client, headers):
 
     response = client.post(route, headers=headers["user"], json=payload)
 
+    # Get id to delete later
+    id = response.json["form"]["id"]
+
     assert response.status_code == 201
+
+    # Delete form entry
+    db.session.query(SecurityForm).filter(id == id).delete()
+    db.session.commit()
+
+    # Ensure entry was deleted
+    entry = db.session.query(SecurityForm).filter(id == id).first()
+    assert entry is None
