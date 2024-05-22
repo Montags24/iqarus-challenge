@@ -4,12 +4,14 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
 </script>
 
 <template>
+    <!-- Sets a dark overlay when modal is visible -->
     <div v-if="settingsModalVisibility" class="fixed inset-0 bg-black opacity-50 z-20"></div>
     <section v-if="onLine" class="mt-11 pt-3 relative">
         <SettingsModal :visible="settingsModalVisibility" @toggleModalVisibility="toggleSettingsModalVisibility"
             @saveSettings="saveSettings">
         </SettingsModal>
 
+        <!-- GET OWN LOCATION BUTTON -->
         <div class="absolute top-6 right-32 z-10">
             <button class="bg-orange-500 hover:bg-orange-600  font-bold py-2 px-4 rounded absolute"
                 @click="getMyLocation">
@@ -25,6 +27,7 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                 </svg>
             </button>
         </div>
+        <!-- SETTINGS MODAL BUTTON -->
         <div class="absolute top-6 right-16 z-10">
             <button class="bg-orange-500 hover:bg-orange-600  font-bold py-2 px-4 rounded absolute"
                 @click="toggleSettingsModalVisibility"><svg class="h-5 w-5 fill-current text-white" viewBox="0 0 24 24"
@@ -39,14 +42,18 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                 </svg>
             </button>
         </div>
+        <!-- SEARCH AREA BUTTON -->
         <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center">
             <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
                 @click="searchArea">Search area
             </button>
         </div>
+        <!-- START GOOGLE MAPS COMPONENT -->
         <GoogleMap class="h-[calc(100vh-128px)]" :api-key="googleMapsApiKey" style="width: 100%" :center="mapCenter"
             :zoom="mapZoom" :fullscreenControl="false" @click="handleMapClick">
+            <!-- SEARCH AREA RADIUS CIRCLE -->
             <Circle :options="circleOptions" />
+            <!-- OWN LOCATION MARKER -->
             <div v-if="ownLocationRequested">
                 <CustomMarker :options="markerOptions">
                     <div style="text-align: center" class="hover:cursor-pointer">
@@ -64,6 +71,7 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                     </div>
                 </CustomMarker>
             </div>
+            <!-- SEARCH RESULTS CUSTOM MARKERS -->
             <div v-if="queryResults.length > 0">
                 <div v-for="(data, index) in queryResults" :key="index">
                     <CustomMarker
@@ -89,13 +97,6 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                         </InfoWindow>
                     </div>
                 </div>
-            </div>
-            <div v-if="selectedLocation">
-                <CustomMarker :options="selectedLocationMarkerOptions">
-                    <div style="text-align: center" class="hover:cursor-pointer">
-                        <div class="size-2 bg-red-500"></div>
-                    </div>
-                </CustomMarker>
             </div>
         </GoogleMap>
     </section>
@@ -142,7 +143,7 @@ export default {
             communicationsSVG: communicationsSVG,
             circleOptions: {
                 center: { lat: 0, lng: 0 },
-                radius: 25000,
+                radius: 6000,
                 strokeColor: '#FF0000',
                 strokeOpacity: 0.4,
                 strokeWeight: 2,
@@ -235,6 +236,7 @@ export default {
                     this.queryResults = results
                     this.$toast.success('Results successful')
                     // initialise info windows to false
+                    this.infoWindow = []
                     const len_query_results = this.queryResults.length
                     for (let i = 0; i < len_query_results; i++) {
                         this.infoWindow[i] = false
@@ -249,10 +251,8 @@ export default {
                     }
                 }
             }
-        }
+        },
     },
-
-
 }
 </script>
 

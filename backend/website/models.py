@@ -203,8 +203,8 @@ class CommunicationsForm(db.Model):
         ),
     )
     commsInfrastructure = Column(String(50))
-    commsPhoneAndInternet = Column(String(50))
-    commsAvailability = Column(String(50))
+    commsPhoneAndInternet = Column(String(100))
+    commsAvailability = Column(String(100))
     commsAlternative = Column(String(50))
     commsComments = Column(String(250))
     connectElectricity = Column(String(50))

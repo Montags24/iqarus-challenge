@@ -15,7 +15,7 @@
             <option>Logistics</option>
             <option>Environment</option>
             <option>Health</option>
-            <option>Communication</option>
+            <option>Communications</option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -104,7 +104,7 @@ export default {
           return this.infrastructureForm;
         case 'security':
           return this.securityForm;
-        case 'communication':
+        case 'communications':
           return this.communicationsForm;
         default:
           return null; // or handle the default case

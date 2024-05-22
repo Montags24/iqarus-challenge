@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <label for="default-range" class="">Search Radius</label> <span>- {{ searchRadiusKm }}km</span>
-                        <input id="default-range" type="range" min="0" max="50" value="25" v-model="searchRadiusKm"
+                        <input id="default-range" type="range" min="0" max="12" value="6" v-model="searchRadiusKm"
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                     </div>
                     <div class="flex justify-center">
@@ -86,10 +86,19 @@ export default {
                 ["Infrastructure", "Medical", "Security", "Logistics", "Environment", "Health", "Communications"],
             ownLocation: false,
             selectedCategories: {},
-            dateFrom: '',
-            dateTo: '',
-            searchRadiusKm: 25,
+            dateFrom: null,
+            dateTo: null,
+            searchRadiusKm: 6,
         };
+    },
+    created() {
+        // Initialize dateFrom to a week ago and dateTo to today's date
+        const today = new Date();
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+
+        this.dateFrom = this.formatDate(weekAgo);
+        this.dateTo = this.formatDate(today);
     },
     methods: {
         toggleModal() {
@@ -103,6 +112,17 @@ export default {
             data["dateTo"] = this.dateTo
             data["searchRadiusKm"] = parseInt(this.searchRadiusKm)
             this.$emit('saveSettings', data)
+        },
+        formatDate(date) {
+            const year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+
+            // Ensure month and day are two digits
+            month = month < 10 ? '0' + month : month;
+            day = day < 10 ? '0' + day : day;
+
+            return `${year}-${month}-${day}`;
         }
     },
 };
