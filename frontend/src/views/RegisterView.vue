@@ -3,7 +3,6 @@
         No accesss in offline mode
     </div>
     <section class="mt-12 mb-16 pt-3 bg-black">
-
         <RegisterUser v-if="!user.logged_in || !onLine" @submitRegistration="submitRegistration"
             :usernameInUse="usernameInUse">
         </RegisterUser>
@@ -48,8 +47,6 @@ export default {
 
         }
     },
-
-
 }
 </script>
 

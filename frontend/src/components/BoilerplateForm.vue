@@ -50,9 +50,7 @@ export default {
     },
     data() {
         return {
-            payload: {
-
-            }
+            payload: {}
         };
     },
     methods: {

@@ -55,7 +55,7 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
             <Circle :options="circleOptions" />
             <!-- OWN LOCATION MARKER -->
             <div v-if="ownLocationRequested">
-                <CustomMarker :options="markerOptions">
+                <CustomMarker :options="ownLocationMarkerOptions">
                     <div style="text-align: center" class="hover:cursor-pointer">
                         <svg class="h-8 w-8 fill-current text-red-500" version="1.0" id="Layer_1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -78,7 +78,7 @@ import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
                         :options="{ position: { lat: data.latitude, lng: data.longitude }, anchorPoint: 'BOTTOM_CENTER' }"
                         @click="infoWindow[index] = true">
                         <div style="text-align: center" class="hover:cursor-pointer">
-                            <img :src="return_svg(data.category)" class="h-10 w-10" alt="">
+                            <img :src="returnSvg(data.category)" class="h-10 w-10" alt="">
                         </div>
 
                     </CustomMarker>
@@ -124,20 +124,19 @@ export default {
     data() {
         return {
             googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-            mapZoom: 2,
-            mapCenter: { lat: 33, lng: 44 },
+            mapZoom: 2, // zoom of map on instantiation
+            mapCenter: { lat: 33, lng: 44 }, // initial coords to center on
             userSelectedLat: '',
             userSelectedLong: '',
             userPosition: {},
-            markerOptions: {},
+            ownLocationMarkerOptions: {},
             ownLocationRequested: false,
             selectedLocationMarkerOptions: {},
             selectedLocationCenter: { lat: 0, lng: 0 },
             selectedLocation: false,
             settingsModalVisibility: false,
-            // payload contains settings from modal
-            payload: '',
-            queryResults: [],
+            payload: '', // payload contains settings from modal
+            queryResults: [], // Array to hold results from search query
             infrastructureSVG: infrastructureSVG,
             securitySVG: securitySVG,
             communicationsSVG: communicationsSVG,
@@ -150,18 +149,15 @@ export default {
                 fillColor: '#FF0000',
                 fillOpacity: 0.15,
             },
-            infoWindow: {},
+            infoWindow: {}, // stores boolean values for InfoWindow popup visibility so they can be hidden initially
         }
     },
     methods: {
-        clickIcon() {
-            this.$toast.success("hello")
-        },
         async getMyLocation() {
             try {
                 const userPosition = await checkLocationPermission();
                 this.userPosition = { lat: userPosition.coords.latitude, lng: userPosition.coords.longitude }
-                this.markerOptions = { position: this.userPosition }
+                this.ownLocationMarkerOptions = { position: this.userPosition }
                 this.mapCenter = this.userPosition
                 this.mapZoom = 12
                 this.ownLocationRequested = true
@@ -175,12 +171,11 @@ export default {
             const clickedLatLng = event.latLng;
             const lat = clickedLatLng.lat();
             const lng = clickedLatLng.lng();
+            // Update search radius circle. Create a new circle to trigger vue reactivity
             this.circleOptions = {
                 ...this.circleOptions,
                 center: { lat: lat, lng: lng }
             };
-
-
             this.selectedLocationCenter = { lat: lat, lng: lng }
             this.selectedLocation = true
             this.selectedLocationMarkerOptions = { position: this.selectedLocationCenter }
@@ -206,7 +201,7 @@ export default {
             }
             this.toggleSettingsModalVisibility()
         },
-        return_svg(category) {
+        returnSvg(category) {
             switch (category) {
                 case "security":
                     return securitySVG

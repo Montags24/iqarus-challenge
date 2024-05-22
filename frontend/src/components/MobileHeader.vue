@@ -85,7 +85,6 @@ export default {
             this.mobileMenuOpen = !this.mobileMenuOpen
         },
     },
-
 }
 </script>
 
