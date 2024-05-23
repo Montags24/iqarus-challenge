@@ -3,12 +3,13 @@ const dbName = 'offlineDB'
 const dbVersion = 1
 let db
 
-const openDB = () => {
+// Function to open a connection to the IndexedDB
+const openDB = dbHeader => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, dbVersion)
 
     request.onerror = event => {
-      reject('Error opening IndexedDB database')
+      reject('Error opening IndexedDB database: ' + event.target.errorCode)
     }
 
     request.onsuccess = event => {
@@ -18,29 +19,42 @@ const openDB = () => {
 
     request.onupgradeneeded = event => {
       db = event.target.result
-      const objectStore = db.createObjectStore('items', { keyPath: 'id', autoIncrement: true })
-      objectStore.createIndex('name', 'name', { unique: false })
+      if (!db.objectStoreNames.contains(dbHeader)) {
+        const objectStore = db.createObjectStore(dbHeader, {
+          keyPath: 'id',
+          autoIncrement: true
+        })
+        objectStore.createIndex('name', 'name', { unique: false })
+      }
     }
   })
 }
 
-// Add an item to the IndexedDB database
-const addItem = async name => {
-  await openDB()
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['items'], 'readwrite')
-    const store = transaction.objectStore('items')
-    const newItem = { name }
-    const request = store.add(newItem)
+// Function to add an item to the IndexedDB
+const addItem = async (name, dbHeader) => {
+  try {
+    await openDB(dbHeader)
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([dbHeader], 'readwrite')
+      const store = transaction.objectStore(dbHeader)
+      const newItem = { name }
+      const request = store.add(newItem)
 
-    request.onerror = event => {
-      reject('Error adding item to IndexedDB')
-    }
+      request.onerror = event => {
+        reject('Error adding item to IndexedDB: ' + event.target.errorCode)
+      }
 
-    request.onsuccess = event => {
-      resolve(event.target.result)
-    }
-  })
+      request.onsuccess = event => {
+        resolve(event.target.result)
+      }
+      transaction.oncomplete = () => {
+        db.close() // Optional: close the database after transaction completes
+      }
+    })
+  } catch (error) {
+    console.log('am ghere')
+    console.error(error)
+  }
 }
 
 // Remove an item from the IndexedDB database

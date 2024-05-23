@@ -90,8 +90,9 @@ export default {
     },
     async addItemToDb(payload) {
       try {
+        console.log(`The payload is ${payload}`)
         const newItem = { payload };
-        const itemId = await addItem(newItem);
+        const itemId = await addItem(newItem, "formEntries");
         this.items.push({ id: itemId, ...newItem });
         console.log("added item")
         this.$toast.success('Form saved. Will attmpt to send when back online')

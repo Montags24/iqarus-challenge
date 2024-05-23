@@ -3,7 +3,7 @@
              inset-x-0 
              top-0">
         <div class="flex justify-between text-center items-center max-container mx-auto px-8">
-            <div v-if="!onLine">
+            <div v-if="!onLine" class="sm:w-24">
                 <svg fill="#f97316" width="34px" height="34px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                     stroke="#f97316" stroke-width="0.00024000000000000003">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -35,7 +35,7 @@
                     </g>
                 </svg>
             </div>
-            <div v-else>
+            <div v-else class="sm:w-24">
                 <svg width="34px" height="34px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                     stroke="#343236">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -48,8 +48,10 @@
                     </g>
                 </svg>
             </div>
-            <h1 class="flex font-montserrat font-semibold text-xl text-orange-500">[ ResQHub ]
-            </h1>
+            <div>
+                <h1 class="flex font-montserrat font-semibold text-xl text-orange-500">[ ResQHub ]
+                </h1>
+            </div>
             <div class="flex pt-1 sm:items-center sm:hidden" @click="toggleMobileMenu">
                 <button class="flex flex-col gap-1 pb-1 h-5 justify-center hover:cursor-pointer">
                     <span class="w-6 h-[2px] bg-orange-500 transition transform duration-200"
@@ -60,8 +62,11 @@
                         :class="{ 'rotate-[-45deg] translate-y-[-3px]': mobileMenuOpen }"></span>
                 </button>
             </div>
-            <div class="hidden sm:block">
-                navlinks
+            <div class="hidden sm:block sm:w-24">
+                <ul class="flex justify-center space-x-4">
+                    <li class="hover:cursor-pointer text-orange-500 font-semibold">FAQ</li>
+                    <li class="hover:cursor-pointer text-orange-500 font-semibold">Language</li>
+                </ul>
             </div>
         </div>
     </div>
