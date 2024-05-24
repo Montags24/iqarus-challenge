@@ -3,7 +3,7 @@
   "short_name": "ResQhub",
   "theme_color": "#000000",
   "background_color": "#000000",
-  "display": "browser",
+  "display": "fullscreen",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
@@ -47,6 +47,21 @@
       "src": "images/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "ResQHub"
+    },
+    {
+      "src": "images/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "label": "ResQHub"
     }
   ]
 }
