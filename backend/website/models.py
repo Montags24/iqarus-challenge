@@ -2,6 +2,7 @@ import os
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
+from website.utils import calculate_haversine
 from website import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float
 from sqlalchemy.sql import func
@@ -37,6 +38,14 @@ class User(db.Model):
             username=self.username,
             timestamp=self.timestamp,
         )
+
+    @staticmethod
+    def get_username(user_id):
+        user = db.session.query(User).filter(User.id == user_id).first()
+        if user:
+            return user.username
+        else:
+            return "N/A"
 
 
 class Organisation(db.Model):
@@ -82,17 +91,32 @@ class SecurityForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="security",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            armedGroupsPresence=self.armedGroupsPresence,
-            reportOfViolence=self.reportOfViolence,
-            localEnforcementPresence=self.localEnforcementPresence,
-            securityRiskComments=self.securityRiskComments,
-            incidentsReported=self.incidentsReported,
-            riskToRelief=self.riskToRelief,
-            incidentsComments=self.incidentsComments,
+            username=User.get_username(self.user_id),
+            form_data={
+                "armedGroupsPresence": self.armedGroupsPresence,
+                "reportOfViolence": self.reportOfViolence,
+                "localEnforcementPresence": self.localEnforcementPresence,
+                "securityRiskComments": self.securityRiskComments,
+                "incidentsReported": self.incidentsReported,
+                "riskToRelief": self.riskToRelief,
+                "incidentsComments": self.incidentsComments,
+            },
+        )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )
 
 
@@ -128,22 +152,37 @@ class InfrastructureForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="infrastructure",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            roadCondition=self.roadCondition,
-            roadDamage=self.roadDamage,
-            roadAccess=self.roadAccess,
-            roadComments=self.roadComments,
-            buildingIntegrity=self.buildingIntegrity,
-            buildingType=self.buildingType,
-            buildingDamage=self.buildingDamage,
-            buildingComments=self.buildingComments,
-            utilityPower=self.utilityPower,
-            utilityWater=self.utilityWater,
-            utilityComms=self.utilityComms,
-            utilityComments=self.utilityComments,
+            username=User.get_username(self.user_id),
+            form_data={
+                "roadCondition": self.roadCondition,
+                "roadDamage": self.roadDamage,
+                "roadAccess": self.roadAccess,
+                "roadComments": self.roadComments,
+                "buildingIntegrity": self.buildingIntegrity,
+                "buildingType": self.buildingType,
+                "buildingDamage": self.buildingDamage,
+                "buildingComments": self.buildingComments,
+                "utilityPower": self.utilityPower,
+                "utilityWater": self.utilityWater,
+                "utilityComms": self.utilityComms,
+                "utilityComments": self.utilityComments,
+            },
+        )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )
 
 
@@ -164,8 +203,8 @@ class CommunicationsForm(db.Model):
         ),
     )
     commsInfrastructure = Column(String(50))
-    commsPhoneAndInternet = Column(String(50))
-    commsAvailability = Column(String(50))
+    commsPhoneAndInternet = Column(String(100))
+    commsAvailability = Column(String(100))
     commsAlternative = Column(String(50))
     commsComments = Column(String(250))
     connectElectricity = Column(String(50))
@@ -177,18 +216,33 @@ class CommunicationsForm(db.Model):
     def get_dict(self):
         return dict(
             id=self.id,
+            category="communications",
             longitude=self.longitude,
             latitude=self.latitude,
             timestamp=self.timestamp,
             user_id=self.user_id,
-            commsInfrastructure=self.commsInfrastructure,
-            commsPhoneAndInternet=self.commsPhoneAndInternet,
-            commsAvailability=self.commsAvailability,
-            commsAlternative=self.commsAlternative,
-            commsComments=self.commsComments,
-            connectElectricity=self.connectElectricity,
-            connectFuelAvailability=self.connectFuelAvailability,
-            connectBackupPower=self.connectBackupPower,
-            connectLocalControl=self.connectLocalControl,
-            connectComments=self.connectComments,
+            username=User.get_username(self.user_id),
+            form_data={
+                "commsInfrastructure": self.commsInfrastructure,
+                "commsPhoneAndInternet": self.commsPhoneAndInternet,
+                "commsAvailability": self.commsAvailability,
+                "commsAlternative": self.commsAlternative,
+                "commsComments": self.commsComments,
+                "connectElectricity": self.connectElectricity,
+                "connectFuelAvailability": self.connectFuelAvailability,
+                "connectBackupPower": self.connectBackupPower,
+                "connectLocalControl": self.connectLocalControl,
+                "connectComments": self.connectComments,
+            },
+        )
+
+    def distance_to(self, lat, lng):
+        """
+        Returns the great-circle distance in kilometers between the instance and a point.
+        """
+        return calculate_haversine(
+            center_lat=lat,
+            center_long=lng,
+            target_lat=self.latitude,
+            target_long=self.longitude,
         )

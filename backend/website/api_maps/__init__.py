@@ -10,5 +10,3 @@ bp = Blueprint(
 )
 
 from website.api_maps import routes
-
-routes = routes

@@ -1,14 +1,20 @@
 <script setup>
-import { GoogleMap, CustomMarker } from 'vue3-google-map'
+import { GoogleMap, CustomMarker, Circle, InfoWindow } from 'vue3-google-map'
 
 </script>
 
 <template>
+    <div v-if="!onLine" class="mt-12 px-3 py-3 block uppercase text-white text-md font-bold bg-slate-400 text-center">
+        No accesss in offline mode
+    </div>
+    <!-- Sets a dark overlay when modal is visible -->
     <div v-if="settingsModalVisibility" class="fixed inset-0 bg-black opacity-50 z-20"></div>
     <section v-if="onLine" class="mt-11 pt-3 relative">
-        <SettingsModal :visible="settingsModalVisibility" @toggleModalVisibility="toggleSettingsModalVisibility">
+        <SettingsModal :visible="settingsModalVisibility" @toggleModalVisibility="toggleSettingsModalVisibility"
+            @saveSettings="saveSettings">
         </SettingsModal>
 
+        <!-- GET OWN LOCATION BUTTON -->
         <div class="absolute top-6 right-32 z-10">
             <button class="bg-orange-500 hover:bg-orange-600  font-bold py-2 px-4 rounded absolute"
                 @click="getMyLocation">
@@ -24,6 +30,7 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
                 </svg>
             </button>
         </div>
+        <!-- SETTINGS MODAL BUTTON -->
         <div class="absolute top-6 right-16 z-10">
             <button class="bg-orange-500 hover:bg-orange-600  font-bold py-2 px-4 rounded absolute"
                 @click="toggleSettingsModalVisibility"><svg class="h-5 w-5 fill-current text-white" viewBox="0 0 24 24"
@@ -38,10 +45,20 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
                 </svg>
             </button>
         </div>
+        <!-- SEARCH AREA BUTTON -->
+        <div class="absolute bottom-4 left-0 right-0 z-10 flex justify-center">
+            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
+                @click="searchArea">Search area
+            </button>
+        </div>
+        <!-- START GOOGLE MAPS COMPONENT -->
         <GoogleMap class="h-[calc(100vh-128px)]" :api-key="googleMapsApiKey" style="width: 100%" :center="mapCenter"
             :zoom="mapZoom" :fullscreenControl="false" @click="handleMapClick">
+            <!-- SEARCH AREA RADIUS CIRCLE -->
+            <Circle :options="circleOptions" />
+            <!-- OWN LOCATION MARKER -->
             <div v-if="ownLocationRequested">
-                <CustomMarker :options="markerOptions">
+                <CustomMarker :options="ownLocationMarkerOptions">
                     <div style="text-align: center" class="hover:cursor-pointer">
                         <svg class="h-8 w-8 fill-current text-red-500" version="1.0" id="Layer_1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -57,12 +74,32 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
                     </div>
                 </CustomMarker>
             </div>
-            <div v-if="selectedLocation">
-                <CustomMarker :options="selectedLocationMarkerOptions">
-                    <div style="text-align: center" class="hover:cursor-pointer">
-                        <div class="size-2 bg-red-500"></div>
+            <!-- SEARCH RESULTS CUSTOM MARKERS -->
+            <div v-if="queryResults.length > 0">
+                <div v-for="(data, index) in queryResults" :key="index">
+                    <CustomMarker
+                        :options="{ position: { lat: data.latitude, lng: data.longitude }, anchorPoint: 'BOTTOM_CENTER' }"
+                        @click="infoWindow[index] = true">
+                        <div style="text-align: center" class="hover:cursor-pointer">
+                            <img :src="returnSvg(data.category)" class="h-10 w-10" alt="">
+                        </div>
+
+                    </CustomMarker>
+                    <div v-if="infoWindow[index]">
+                        <InfoWindow :options="{ position: { lat: data.latitude, lng: data.longitude } }"
+                            v-model="infoWindow[index]">
+                            <template #default>
+                                <div>
+                                    <p>Username: {{ data.username }}</p>
+                                    <p>Timestamp: {{ data.timestamp }}</p>
+                                    <div v-for="(value, index) in Object.entries(data.form_data)" :key="index">
+                                        <p>{{ value[0] }}: {{ value[1] ? value[1] : 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </InfoWindow>
                     </div>
-                </CustomMarker>
+                </div>
             </div>
         </GoogleMap>
     </section>
@@ -71,9 +108,13 @@ import { GoogleMap, CustomMarker } from 'vue3-google-map'
 <script>
 import { checkLocationPermission } from '@/stores/geoLocation';
 import SettingsModal from '../components/SettingsModal.vue'
+import { infrastructureSVG, communicationsSVG, securitySVG } from '@/assets/svg';
 export default {
     props: {
         user: {
+            type: Object,
+        },
+        maps: {
             type: Object,
         },
         onLine: {
@@ -86,27 +127,40 @@ export default {
     data() {
         return {
             googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-            mapZoom: 2,
-            mapCenter: { lat: 33, lng: 44 },
-            latitude: '',
-            longitude: '',
+            mapZoom: 2, // zoom of map on instantiation
+            mapCenter: { lat: 33, lng: 44 }, // initial coords to center on
+            userSelectedLat: '',
+            userSelectedLong: '',
             userPosition: {},
-            markerOptions: {},
+            ownLocationMarkerOptions: {},
             ownLocationRequested: false,
             selectedLocationMarkerOptions: {},
             selectedLocationCenter: { lat: 0, lng: 0 },
             selectedLocation: false,
-            settingsModalVisibility: false
+            settingsModalVisibility: false,
+            payload: '', // payload contains settings from modal
+            queryResults: [], // Array to hold results from search query
+            infrastructureSVG: infrastructureSVG,
+            securitySVG: securitySVG,
+            communicationsSVG: communicationsSVG,
+            circleOptions: {
+                center: { lat: 0, lng: 0 },
+                radius: 6000,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.4,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.15,
+            },
+            infoWindow: {}, // stores boolean values for InfoWindow popup visibility so they can be hidden initially
         }
     },
     methods: {
         async getMyLocation() {
             try {
                 const userPosition = await checkLocationPermission();
-                this.latitude = userPosition.coords.latitude
-                this.longitude = userPosition.coords.longitude
-                this.userPosition = { lat: this.latitude, lng: this.longitude }
-                this.markerOptions = { position: this.userPosition }
+                this.userPosition = { lat: userPosition.coords.latitude, lng: userPosition.coords.longitude }
+                this.ownLocationMarkerOptions = { position: this.userPosition }
                 this.mapCenter = this.userPosition
                 this.mapZoom = 12
                 this.ownLocationRequested = true
@@ -120,18 +174,83 @@ export default {
             const clickedLatLng = event.latLng;
             const lat = clickedLatLng.lat();
             const lng = clickedLatLng.lng();
-
+            // Update search radius circle. Create a new circle to trigger vue reactivity
+            this.circleOptions = {
+                ...this.circleOptions,
+                center: { lat: lat, lng: lng }
+            };
             this.selectedLocationCenter = { lat: lat, lng: lng }
             this.selectedLocation = true
             this.selectedLocationMarkerOptions = { position: this.selectedLocationCenter }
             this.mapCenter = this.selectedLocationCenter
+            this.userSelectedLat = lat
+            this.userSelectedLong = lng
         },
         toggleSettingsModalVisibility() {
             this.settingsModalVisibility = !this.settingsModalVisibility
-        }
+        },
+        saveSettings(payload) {
+            this.payload = payload
+
+            this.circleOptions = {
+                ...this.circleOptions,
+                radius: payload.searchRadiusKm * 1000
+            };
+
+            if (payload.ownLocation) {
+                this.getMyLocation()
+            } else {
+                this.ownLocationRequested = false
+            }
+            this.toggleSettingsModalVisibility()
+        },
+        returnSvg(category) {
+            switch (category) {
+                case "security":
+                    return securitySVG
+                case "communications":
+                    return communicationsSVG
+                case "infrastructure":
+                    return infrastructureSVG
+                default:
+                //
+            }
+        },
+        async searchArea() {
+            if (this.payload == '') {
+                this.$toast.error("Please update map settings first")
+            } else if (this.userSelectedLat == '' || this.userSelectedLong == '') {
+                this.$toast.error("Please click on the map to set search location")
+            } else if (this.payload.dateTo == '' || this.payload.dateFrom == '') {
+                this.$toast.error("Please select a date range")
+            }
+            else {
+                try {
+                    this.queryResults = ''
+                    this.payload["latitude"] = this.userSelectedLat
+                    this.payload["longitude"] = this.userSelectedLong
+                    const results = await this.maps.apiGetMapsSearchRequest(this.payload)
+                    console.log(results)
+                    this.queryResults = results
+                    this.$toast.success('Results successful')
+                    // initialise info windows to false
+                    this.infoWindow = []
+                    const len_query_results = this.queryResults.length
+                    for (let i = 0; i < len_query_results; i++) {
+                        this.infoWindow[i] = false
+                    }
+                } catch (error) {
+                    console.log(error.status)
+                    if (error.status === 409) {
+                        // enter error codes
+                    } else {
+                        // Handle other errors
+                        console.log("Other error:", error);
+                    }
+                }
+            }
+        },
     },
-
-
 }
 </script>
 

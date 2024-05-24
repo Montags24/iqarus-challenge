@@ -50,15 +50,20 @@ export default {
     },
     data() {
         return {
-            payload: {
-
-            }
+            payload: {}
         };
     },
     methods: {
         submitForm() {
             this.payload.formName = this.formObj.category
             this.$emit('submitForm', this.payload)
+        }
+    },
+    watch: {
+        formObj(newCategory, oldCategory) {
+            if (newCategory != oldCategory) {
+                this.payload = {}
+            }
         }
     }
 };

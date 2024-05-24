@@ -10,20 +10,20 @@ SESSION_EXPIRES_SECONDS = int(os.environ.get("SESSION_EXPIRES_SECONDS"))
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 
-# User CRUD
 @bp.route("/login", methods=["POST"])
 def login():
     try:
         api_package = request.get_json()
-    except KeyError:
-        return jsonify(message="Bad api request - please try again"), 400
     except Exception:
         return jsonify(message="An error occured"), 500
 
     try:
         username = api_package["username"]
         password = api_package["password"]
+    except KeyError:
+        return jsonify(message="Bad api request - please try again"), 400
 
+    try:
         user = User.query.filter_by(username=username).first()
 
         if user is None:
@@ -53,7 +53,7 @@ def login():
         package["name"] = user_dict["name"]
         package["username"] = user_dict["username"]
         package["session_jwt"] = session_jwt
-        # Add user organisation
+        # TODO Add user organisation
 
         return (
             jsonify(message="Login successful", package=package),

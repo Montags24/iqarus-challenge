@@ -1,10 +1,11 @@
 import pytest
 import os
 import secrets
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+import random
 from dotenv import load_dotenv
 from website import create_app, db
-from website.models import SecurityForm
+from website.models import SecurityForm, User
 from website.tests.utilities import get_headers, convert_date_to_ms
 
 
@@ -31,14 +32,18 @@ def headers(client):
     return headers
 
 
-def test_add_form(client, headers):
+def test_get_form_data_for_maps(client, headers):
+    # Add a response to the security form
     route = "api/forms/security"
     token = secrets.token_urlsafe(5)
 
+    latitude = random.randint(-90, 90)
+    longitude = random.randint(-180, 180)
+
     payload = {
         "timestamp": convert_date_to_ms(datetime.now(tz=timezone.utc)),
-        "latitude": 40.0,
-        "longitude": 40.0,
+        "latitude": latitude,
+        "longitude": longitude,
         "armedGroupsPresence": f"{token}_armedGroupsPresence",
         "reportOfViolence": f"{token}_reportOfViolence",
         "localEnforcementPresence": f"{token}_localEnforcementPresence",
@@ -52,8 +57,26 @@ def test_add_form(client, headers):
 
     # Get id to delete later
     id = response.json["form"]["id"]
-
     assert response.status_code == 201
+
+    route = "api/maps/"
+
+    now = datetime.now().date()
+    one_week_ago = now - timedelta(weeks=1)
+
+    payload = {
+        "categories": ["security"],
+        "dateFrom": one_week_ago.strftime("%Y-%m-%d"),
+        "dateTo": now.strftime("%Y-%m-%d"),
+        "searchLatitude": latitude,
+        "searchLongitude": longitude,
+        "searchRadiusKm": 5,
+    }
+
+    response = client.post(route, headers=headers["user"], json=payload)
+
+    assert response.status_code == 200
+    assert len(response.json["results"]) >= 1
 
     # Delete form entry
     db.session.query(SecurityForm).filter(id == id).delete()

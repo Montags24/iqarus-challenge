@@ -1,4 +1,8 @@
 <template>
+    <div v-if="!onLine" class="mt-12 px-3 py-3 block uppercase text-white text-md font-bold bg-slate-400 text-center">
+        No accesss in offline mode
+    </div>
+    <!-- START USER LOGIN AND REGISTER-->
     <section v-if="!user.loggedIn && onLine" class="mt-12 pt-6 ">
         <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
             <label class="block uppercase text-white text-sm mb-2" for="username">Username</label>
@@ -22,6 +26,7 @@
             </RouterLink>
         </div>
     </section>
+    <!-- DISPLAY USER DETAILS ON LOGIN -->
     <section v-if="user.loggedIn && onLine" class="mt-12 pt-6 pb-4">
         <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
             <div class="flex justify-between mb-2">
@@ -64,6 +69,7 @@
             </div>
         </div>
     </section>
+    <!-- DISPLAY USER PREVIOUS UPDATES -->
     <section v-if="user.loggedIn && onLine">
         <div class="max-w-xs mx-auto rounded-lg border border-gray-700 bg-[#161b22] flex flex-col text-white px-4 py-3">
             Previous updates
@@ -75,6 +81,9 @@
 export default {
     props: {
         user: {
+            type: Object,
+        },
+        maps: {
             type: Object,
         },
         onLine: {
