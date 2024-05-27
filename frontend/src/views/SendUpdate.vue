@@ -32,7 +32,7 @@
 <script>
 import BoilerplateForm from '../components/BoilerplateForm.vue';
 import { infrastructureForm, securityForm, communicationsForm } from '../components/index';
-import { addItem, removeItem, getAllItems } from '@/stores/offlineWorker';
+import { addItem } from '@/stores/offlineWorker';
 import { checkLocationPermission } from '@/stores/geoLocation';
 
 export default {
@@ -64,15 +64,7 @@ export default {
           this.$toast.info('Please login to post update')
         }
         try {
-          const userPosition = await checkLocationPermission();
-          payload.latitude = userPosition.coords.latitude
-          payload.longitude = userPosition.coords.longitude
-          payload.timestamp = Date.now()
-        } catch (error) {
-          console.error('Error getting location:', error);
-          // Handle error
-        }
-        try {
+          payload = this.addUserLocationToPayload(payload)
           await this.user.apiSubmitForm(this.selectedForm.toLowerCase(), payload)
           this.$toast.success("Form successfully submitted")
         } catch (error) {
@@ -85,7 +77,26 @@ export default {
           }
         }
       } else {
-        this.addItemToDb(JSON.stringify(payload));
+        try {
+          payload = await this.addUserLocationToPayload(payload);
+          await this.addItemToDb(JSON.stringify(payload));
+          this.$toast.success('Form saved. Will attempt to send when back online');
+        } catch (error) {
+          console.error('Failed to save form offline:', error);
+          this.$toast.error('Failed to save form offline');
+        }
+      }
+    },
+    async addUserLocationToPayload(payload) {
+      try {
+        const userPosition = await checkLocationPermission();
+        payload.latitude = userPosition.coords.latitude
+        payload.longitude = userPosition.coords.longitude
+        payload.timestamp = Date.now()
+        return payload
+      } catch (error) {
+        console.error('Error getting location:', error);
+        // Handle error
       }
     },
     async addItemToDb(payload) {
@@ -94,8 +105,6 @@ export default {
         const newItem = { payload };
         const itemId = await addItem(newItem, "formEntries");
         this.items.push({ id: itemId, ...newItem });
-        console.log("added item")
-        this.$toast.success('Form saved. Will attmpt to send when back online')
       } catch (error) {
         console.error(error);
         alert('Failed to add item');

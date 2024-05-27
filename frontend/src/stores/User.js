@@ -10,8 +10,8 @@ class User {
     this.longitude = ''
   }
 
-  async api_register (payload) {
-    console.log('In api_register')
+  async apiRegister (payload) {
+    console.log('In apiRegister')
     const new_user_credentials = {
       name: payload.name,
       username: payload.username,
@@ -150,42 +150,6 @@ class User {
 
   async apiSubmitForm (category, payload) {
     console.log('In apiSubmitForm')
-
-    const request_options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.sessionJwt}`
-      },
-      body: JSON.stringify(payload)
-    }
-
-    const url = this.domainOrigin + `/api/forms/${category}`
-
-    try {
-      const response = await fetch(url, request_options)
-      if (!response.ok) {
-        const errorData = await response.json() // Throw an error object containing both the status code and the error message
-        throw {
-          status: response.status,
-          message: errorData.message || 'Network response was not ok'
-        }
-      }
-      const apiObject = await response.json()
-      return apiObject.form
-    } catch (error) {
-      // If the error object contains a status code, return it along with the error message
-      if (error.status) {
-        throw { status: error.status }
-      } else {
-        // Otherwise, just return the error message
-        throw new Error('Failed to submit form: ' + error.message)
-      }
-    }
-  }
-
-  async apiSubmitOfflineForms (payload) {
-    console.log('In apiSubmitOfflineForms')
 
     const request_options = {
       method: 'POST',

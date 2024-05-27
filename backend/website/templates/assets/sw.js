@@ -65,4 +65,3 @@ define(['./workbox-3e911b1d'], function (e) {
       new e.NavigationRoute(e.createHandlerBoundToURL('index.html'))
     )
 })
-//# sourceMappingURL=sw.js.map

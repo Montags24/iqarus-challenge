@@ -1,10 +1,9 @@
-// Open a connection to the IndexedDB database
 const dbName = 'offlineDB'
 const dbVersion = 1
 let db
 
-// Function to open a connection to the IndexedDB
-const openDB = dbHeader => {
+// Function to open a connection to the IndexedDB and ensure the object stores exist
+const openDB = () => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, dbVersion)
 
@@ -14,31 +13,33 @@ const openDB = dbHeader => {
 
     request.onsuccess = event => {
       db = event.target.result
-      resolve()
+      resolve(db)
     }
 
     request.onupgradeneeded = event => {
-      db = event.target.result
-      if (!db.objectStoreNames.contains(dbHeader)) {
-        const objectStore = db.createObjectStore(dbHeader, {
-          keyPath: 'id',
-          autoIncrement: true
-        })
-        objectStore.createIndex('name', 'name', { unique: false })
+      const db = event.target.result
+      if (!db.objectStoreNames.contains('sessionJwt')) {
+        db.createObjectStore('sessionJwt', { keyPath: 'id', autoIncrement: true })
+      }
+      if (!db.objectStoreNames.contains('formEntries')) {
+        db.createObjectStore('formEntries', { keyPath: 'id', autoIncrement: true })
       }
     }
   })
 }
 
-// Function to add an item to the IndexedDB
-const addItem = async (name, dbHeader) => {
+// Function to add an item to the specified object store
+const addItem = async (item, storeName) => {
+  console.log(item)
   try {
-    await openDB(dbHeader)
+    const db = await openDB()
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([dbHeader], 'readwrite')
-      const store = transaction.objectStore(dbHeader)
-      const newItem = { name }
-      const request = store.add(newItem)
+      const transaction = db.transaction([storeName], 'readwrite')
+      const store = transaction.objectStore(storeName)
+      if (item.id) {
+        delete item.id
+      }
+      const request = store.add(item)
 
       request.onerror = event => {
         reject('Error adding item to IndexedDB: ' + event.target.errorCode)
@@ -47,50 +48,66 @@ const addItem = async (name, dbHeader) => {
       request.onsuccess = event => {
         resolve(event.target.result)
       }
+
       transaction.oncomplete = () => {
-        db.close() // Optional: close the database after transaction completes
+        db.close() // Close the database after transaction completes
       }
     })
   } catch (error) {
-    console.log('am ghere')
-    console.error(error)
+    throw new Error('Failed to add item to database: ' + error.message)
   }
 }
 
-// Remove an item from the IndexedDB database
-const removeItem = async id => {
-  await openDB()
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['items'], 'readwrite')
-    const store = transaction.objectStore('items')
-    const request = store.delete(id)
+// Function to get all items from the specified object store
+const getAllItems = async storeName => {
+  try {
+    const db = await openDB()
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([storeName], 'readonly')
+      const store = transaction.objectStore(storeName)
+      const request = store.getAll()
 
-    request.onerror = event => {
-      reject('Error removing item from IndexedDB')
-    }
+      request.onerror = event => {
+        reject('Error fetching items from IndexedDB: ' + event.target.errorCode)
+      }
 
-    request.onsuccess = event => {
-      resolve()
-    }
-  })
+      request.onsuccess = event => {
+        resolve(event.target.result)
+      }
+
+      transaction.oncomplete = () => {
+        db.close() // Close the database after transaction completes
+      }
+    })
+  } catch (error) {
+    throw new Error('Failed to fetch items from database: ' + error.message)
+  }
 }
 
-// Fetch all items from the IndexedDB database
-const getAllItems = async () => {
-  await openDB()
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['items'], 'readonly')
-    const store = transaction.objectStore('items')
-    const request = store.getAll()
+// Function to clear all items from the specified object store
+const clearStore = async storeName => {
+  try {
+    const db = await openDB()
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([storeName], 'readwrite')
+      const store = transaction.objectStore(storeName)
+      const request = store.clear()
 
-    request.onerror = event => {
-      reject('Error fetching items from IndexedDB')
-    }
+      request.onerror = event => {
+        reject('Error clearing store in IndexedDB: ' + event.target.errorCode)
+      }
 
-    request.onsuccess = event => {
-      resolve(event.target.result)
-    }
-  })
+      request.onsuccess = event => {
+        resolve()
+      }
+
+      transaction.oncomplete = () => {
+        db.close() // Close the database after transaction completes
+      }
+    })
+  } catch (error) {
+    throw new Error('Failed to clear store in database: ' + error.message)
+  }
 }
 
-export { addItem, removeItem, getAllItems }
+export { addItem, getAllItems, clearStore }

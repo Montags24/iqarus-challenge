@@ -38,7 +38,7 @@ const maps = reactive(new Maps(domainOrigin, user))
 <script>
 import MobileNavBar from './components/MobileNavBar.vue';
 import MobileHeader from './components/MobileHeader.vue';
-import { getAllItems } from './stores/offlineWorker';
+import { getAllItems, clearStore } from './stores/offlineWorker';
 
 export default {
   components: {
@@ -47,21 +47,26 @@ export default {
   },
   data() {
     return {
-      onLine: navigator.onLine
+      onLine: navigator.onLine,
+      sessionJwt: ""
     }
   },
   watch: {
-    // whenever onLine changes from false to true - try to send cached entries to server
+    // whenever onLine changes from false to true - try to send entries in IndexedDb
+    // to server
     async onLine(newStatus) {
-      if (newStatus) {
-        console.log("Back online")
-        const items = await getAllItems()
-        if (items) {
-          for (let i = 0; i < items.length; i++) {
-            console.log(items[i])
-            console.log(JSON.parse(items[i].name.payload))
+      try {
+        if (newStatus) {
+          const formEntries = this.parseFormEntriesToJson(await getAllItems("formEntries"))
+          const sessionJwt = (await getAllItems("sessionJwt"))[0].sessionJwt
+          if (formEntries) {
+            const response = await this.apiSubmitOfflineForms(formEntries, sessionJwt)
+            this.$toast.success(`Back online. ${response.forms.length} forms posted successfully`)
+            await clearStore("formEntries")
           }
         }
+      } catch (error) {
+        console.log(error)
       }
     }
   },
@@ -69,6 +74,56 @@ export default {
     handleOnlineStatus() {
       this.onLine = navigator.onLine;
     },
+    parseFormEntriesToJson(formEntries) {
+      const formsToReturn = []
+      for (let i = 0; i < formEntries.length; i++) {
+        formsToReturn.push(JSON.parse(formEntries[i].payload))
+      }
+      console.log(formsToReturn)
+      return formsToReturn
+    },
+    async apiSubmitOfflineForms(formEntries, sessionJwt) {
+      "In apiSubmitOfflineForms"
+      let domainOrigin = window.location.origin
+      if (domainOrigin.slice(-5) == ":5173") {
+        domainOrigin = domainOrigin.replace(":5173", ":5000")
+      }
+
+      console.log('In apiSubmitOfflineForms')
+      const payload = { payload: formEntries }
+
+      const request_options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionJwt}`
+        },
+        body: JSON.stringify(payload)
+      }
+
+      const url = domainOrigin + `/api/forms/`
+
+      try {
+        const response = await fetch(url, request_options)
+        if (!response.ok) {
+          const errorData = await response.json() // Throw an error object containing both the status code and the error message
+          throw {
+            status: response.status,
+            message: errorData.message || 'Network response was not ok'
+          }
+        }
+        const apiObject = await response.json()
+        return apiObject
+      } catch (error) {
+        // If the error object contains a status code, return it along with the error message
+        if (error.status) {
+          throw { status: error.status }
+        } else {
+          // Otherwise, just return the error message
+          throw new Error('Failed to submit forms: ' + error.message)
+        }
+      }
+    }
   },
   mounted() {
     window.addEventListener("online", this.handleOnlineStatus);
@@ -79,5 +134,6 @@ export default {
     window.removeEventListener("online", this.handleOnlineStatus);
     window.removeEventListener("offline", this.handleOnlineStatus);
   },
+
 };
 </script>

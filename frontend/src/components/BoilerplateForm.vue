@@ -57,6 +57,7 @@ export default {
         submitForm() {
             this.payload.formName = this.formObj.category
             this.$emit('submitForm', this.payload)
+            this.payload = {}
         }
     },
     watch: {
