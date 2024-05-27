@@ -79,7 +79,6 @@ export default {
       } else {
         try {
           payload = await this.addUserLocationToPayload(payload);
-          console.log(payload)
           await this.addItemToDb(JSON.stringify(payload));
           this.$toast.success('Form saved. Will attempt to send when back online');
         } catch (error) {

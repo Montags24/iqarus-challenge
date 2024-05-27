@@ -10,8 +10,8 @@ class User {
     this.longitude = ''
   }
 
-  async api_register (payload) {
-    console.log('In api_register')
+  async apiRegister (payload) {
+    console.log('In apiRegister')
     const new_user_credentials = {
       name: payload.name,
       username: payload.username,

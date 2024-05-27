@@ -52,12 +52,12 @@ export default {
     }
   },
   watch: {
-    // whenever onLine changes from false to true - try to send cached entries to server
+    // whenever onLine changes from false to true - try to send entries in IndexedDb
+    // to server
     async onLine(newStatus) {
       try {
         if (newStatus) {
-          console.log("Back online")
-          const formEntries = this.parseFormEntries(await getAllItems("formEntries"))
+          const formEntries = this.parseFormEntriesToJson(await getAllItems("formEntries"))
           const sessionJwt = (await getAllItems("sessionJwt"))[0].sessionJwt
           if (formEntries) {
             const response = await this.apiSubmitOfflineForms(formEntries, sessionJwt)
@@ -74,7 +74,7 @@ export default {
     handleOnlineStatus() {
       this.onLine = navigator.onLine;
     },
-    parseFormEntries(formEntries) {
+    parseFormEntriesToJson(formEntries) {
       const formsToReturn = []
       for (let i = 0; i < formEntries.length; i++) {
         formsToReturn.push(JSON.parse(formEntries[i].payload))
@@ -83,6 +83,7 @@ export default {
       return formsToReturn
     },
     async apiSubmitOfflineForms(formEntries, sessionJwt) {
+      "In apiSubmitOfflineForms"
       let domainOrigin = window.location.origin
       if (domainOrigin.slice(-5) == ":5173") {
         domainOrigin = domainOrigin.replace(":5173", ":5000")
@@ -119,7 +120,7 @@ export default {
           throw { status: error.status }
         } else {
           // Otherwise, just return the error message
-          throw new Error('Failed to submit form: ' + error.message)
+          throw new Error('Failed to submit forms: ' + error.message)
         }
       }
     }

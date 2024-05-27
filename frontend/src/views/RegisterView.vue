@@ -32,7 +32,7 @@ export default {
         async submitRegistration(payload) {
             try {
                 this.usernameInUse = false
-                await this.user.api_register(payload)
+                await this.user.apiRegister(payload)
                 this.$toast.success('Registration successful. Please login')
                 this.$route.push('/login')
             } catch (error) {
@@ -44,7 +44,6 @@ export default {
                     console.log("Other error:", error);
                 }
             }
-
         }
     },
 }
