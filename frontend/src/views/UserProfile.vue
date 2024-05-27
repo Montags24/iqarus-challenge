@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import { addItem, getAllItems, clearStore } from '@/stores/offlineWorker';
 export default {
     props: {
         user: {
@@ -108,6 +109,14 @@ export default {
                 await this.user.apiLogin(this.username, this.password)
                 this.incorrectCredentials = false
                 this.$toast.success('Login successful')
+                // add session JWT to indexedDB, to be used when posting forms from offline
+                // check if sessionJWt exists, refresh it if so
+                const entry = getAllItems("sessionJwt")
+                if (entry) {
+                    clearStore("sessionJwt")
+                }
+                const sessionJwt = { sessionJwt: this.user.sessionJwt }
+                await addItem(sessionJwt, "sessionJwt");
                 this.$router.push('/')
             } catch (error) {
                 console.log(error.status)
