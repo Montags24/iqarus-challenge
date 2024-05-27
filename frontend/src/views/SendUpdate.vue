@@ -64,7 +64,8 @@ export default {
           this.$toast.info('Please login to post update')
         }
         try {
-          payload = this.addUserLocationToPayload(payload)
+          payload = await this.addUserLocationToPayload(payload)
+          console.log(payload)
           await this.user.apiSubmitForm(this.selectedForm.toLowerCase(), payload)
           this.$toast.success("Form successfully submitted")
         } catch (error) {
